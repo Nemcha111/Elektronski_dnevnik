@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
@@ -20,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Entity
 @Table (name ="Razredi")
 @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
+
 public class RazredEntity {
 	
 	
@@ -28,22 +30,23 @@ public class RazredEntity {
 	private Integer idRazreda;
 	
 	@Column
-	@NotNull(message = "razred mora biti unet.")
+//	@NotNull(message = "razred mora biti unet.")
 	@Max(value = 8, message = "Razred mora biti unet kao jednocifreni broj izmedju 1 i 8.")
+	@Min(value = 1, message = "Razred mora biti unet kao jednocifreni broj izmedju 1 i 8.")
 	private Integer razred;
 	
 	//TODO probaj da dodas polja INTEGER pocetak i karaj skolske godine
 	//a da skolska godina spaja ta dva polja sa kosom crtom izmedju
 	
-//	@JsonIgnore
-//	@Column
-//	@NotNull(message = "Pocetak skolske godine mora biti unet.")
-//	private Integer pocetakSkolskeGodine;
+	//@JsonIgnore
+	@Column
+	//@NotNull(message = "Pocetak skolske godine mora biti unet.")
+	private Integer pocetakSkolskeGodine;
 	
 	
 	@Column
-	@NotNull(message = "Skolska godina mora biti uneta.")
-	@Pattern(regexp = "^20([0-9]{2})\\/20([0-9]{2})$", message = "Skolska godina mora biti uneta u formi \"godina/godina\".")  
+	//@NotNull(message = "Skolska godina mora biti uneta.")
+	@Pattern(regexp = "^20([0-9]{2})\\/20([0-9]{2})$", message = "Skolska godina mora biti uneta u formi \"godina/godina\". Godina mora pocinjati sa 20.")  
 	private String skolskaGodinaRazreda;
 	
 	
@@ -81,6 +84,17 @@ public class RazredEntity {
 		this.razred = razred;
 	}
 
+	
+
+	public Integer getPocetakSkolskeGodine() {
+		return pocetakSkolskeGodine;
+	}
+
+
+	public void setPocetakSkolskeGodine(Integer pocetakSkolskeGodine) {
+		this.pocetakSkolskeGodine = pocetakSkolskeGodine;
+	}
+
 
 	public String getSkolskaGodinaRazreda() {
 		return skolskaGodinaRazreda;
@@ -114,9 +128,15 @@ public class RazredEntity {
 
 	@Override
 	public String toString() {
-		return "RazredEntity [idRazreda=" + idRazreda + ", razred=" + razred + ", skolskaGodinaRazreda="
-				+ skolskaGodinaRazreda + ", odeljenja=" + odeljenja + ", predmeti=" + predmeti + "]";
+		return "RazredEntity [idRazreda=" + idRazreda + ", razred=" + razred + ", pocetakSkolskeGodine="
+				+ pocetakSkolskeGodine + ", skolskaGodinaRazreda=" + skolskaGodinaRazreda + ", odeljenja=" + odeljenja
+				+ ", predmeti=" + predmeti + "]";
 	}
+
+
+	
+	
+	
 
 
 

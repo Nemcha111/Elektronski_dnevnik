@@ -67,22 +67,42 @@ public class OdeljenjeController {
 	@RequestMapping(value = "/obrisi/{idOdeljenja}", method = RequestMethod.DELETE)
 	public ResponseEntity<?> brisanjeOdeljenja(@PathVariable Integer idOdeljenja) {
 
-//		if (result.hasErrors()) {
-//			return new ResponseEntity<>(createErrorMessage(result), HttpStatus.BAD_REQUEST);
-//		}
 
 		if (odeljenjeRepo.findById(idOdeljenja).isPresent() == false) {
 
 			return new ResponseEntity<RESTError>(new RESTError("Odeljenje koje zelite da obrisete ne postoji."),
 					HttpStatus.NOT_FOUND);
 		}
+		
+		OdeljenjeEntity odeljenje = odeljenjeRepo.findById(idOdeljenja).get();
+		if (odeljenje.getUcenici().size() > 0) {
+			return new ResponseEntity<RESTError>(
+					new RESTError("Ovo odeljenje ima dodeljenog bar jednog ucenika te ga ne mozete obrisati."),
+					HttpStatus.NOT_FOUND);
+		}
 
-		OdeljenjeEntity odelj = odeljenjeRepo.findById(idOdeljenja).get();
+		
 		odeljenjeRepo.deleteById(idOdeljenja);
-		return new ResponseEntity<OdeljenjeEntity>(odelj, HttpStatus.OK);
+		return new ResponseEntity<OdeljenjeEntity>(odeljenje, HttpStatus.OK);
 		
 
 	}
+	
+
+	@RequestMapping(value = "/pronadjiPremaId/{idOdeljenja}", method = RequestMethod.GET)
+	public ResponseEntity<?> pronadjiOdeljenjePremaId(@PathVariable Integer idOdeljenja) {
+
+		if (odeljenjeRepo.findById(idOdeljenja).isPresent() == false) {
+
+			return new ResponseEntity<RESTError>(new RESTError("Odeljenje sa prosledjenim ID brojem ne postoji."),
+					HttpStatus.NOT_FOUND);
+		}
+
+		OdeljenjeEntity odeljenje = odeljenjeRepo.findById(idOdeljenja).get();
+		return new ResponseEntity<OdeljenjeEntity>(odeljenje, HttpStatus.OK);
+
+	}
+	
 
 	private String createErrorMessage(BindingResult result) {
 		return result.getAllErrors().stream().map(ObjectError::getDefaultMessage).collect(Collectors.joining(" "));

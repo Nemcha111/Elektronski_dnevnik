@@ -54,28 +54,29 @@ public class RazredController {
 		if (result.hasErrors()) {
 			return new ResponseEntity<>(createErrorMessage(result), HttpStatus.BAD_REQUEST);
 		}
-
-		
-		//TODO probaj da napravis da desna godina bide za jedan broj veca o leve
 		
 		return razredService.proveraIKreiranjeRazreda(razred);
 
 	}
 
 	@RequestMapping(value = "/obrisi/{idRazreda}", method = RequestMethod.DELETE)
-	public ResponseEntity<?> brisanjeRazreda(@PathVariable Integer idRazreda) {        //, BindingResult result) {
-
-//		if (result.hasErrors()) {
-//			return new ResponseEntity<>(createErrorMessage(result), HttpStatus.BAD_REQUEST);
-//		}
+	public ResponseEntity<?> brisanjeRazreda(@PathVariable Integer idRazreda) {
 
 		if (razredRepo.findById(idRazreda).isPresent() == false) {
 
 			return new ResponseEntity<RESTError>(new RESTError("Razred koji zelite da obrisete ne postoji."),
 					HttpStatus.NOT_FOUND);
 		}
-
+		
 		RazredEntity raz = razredRepo.findById(idRazreda).get();
+		if (raz.getOdeljenja().size()>0) {
+				return new ResponseEntity<RESTError>(new RESTError("Ovaj razred ima dodeljena odeljenja te ga ne mozete obrisati."),
+					HttpStatus.NOT_FOUND);
+		}
+		
+		
+
+		
 		razredRepo.deleteById(idRazreda);
 		return new ResponseEntity<RazredEntity>(raz, HttpStatus.OK);
 
@@ -112,9 +113,29 @@ public class RazredController {
 		return new ResponseEntity<RazredEntity>(razredRepo.save(noviRazred), HttpStatus.OK);
 
 	}
+	
+	
+	@RequestMapping(value = "/pronadjiPremaId/{idRazreda}", method = RequestMethod.GET)
+	public ResponseEntity<?> pronadjiRazredPremaId(@PathVariable Integer idRazreda) {
+
+		if (razredRepo.findById(idRazreda).isPresent() == false) {
+
+			return new ResponseEntity<RESTError>(new RESTError("Razred sa prosledjenim ID brojem ne postoji."),
+					HttpStatus.NOT_FOUND);
+		}
+
+		RazredEntity razred = razredRepo.findById(idRazreda).get();
+		return new ResponseEntity<RazredEntity>(razred, HttpStatus.OK);
+
+	}
+	
+	
 
 	private String createErrorMessage(BindingResult result) {
 		return result.getAllErrors().stream().map(ObjectError::getDefaultMessage).collect(Collectors.joining(" "));
 	}
+	
+	
+	
 
 }

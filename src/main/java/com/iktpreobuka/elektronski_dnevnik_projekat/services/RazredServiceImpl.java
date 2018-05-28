@@ -24,16 +24,24 @@ public class RazredServiceImpl implements RazredService {
 
 		for (RazredEntity razredEntity : razredi) {
 
-			if (razredEntity.getSkolskaGodinaRazreda().equals(razred.getSkolskaGodinaRazreda())) {
+			Integer test1 = razredEntity.getPocetakSkolskeGodine();
+			Integer test2 = razred.getPocetakSkolskeGodine();
+
+			//if (razredEntity.getPocetakSkolskeGodine().intValue() ==razred.getPocetakSkolskeGodine().intValue()) {// --NE RADI ZASTO
+			 if (razredEntity.getPocetakSkolskeGodine().equals( razred.getPocetakSkolskeGodine())) {
+			//if (test1 == test2) {
 				return new ResponseEntity<RESTError>(new RESTError("Razredi za tu skolsku godinu su vec kreirani."),
 						HttpStatus.BAD_REQUEST);
 			}
 
 		}
+
 		for (int i = 0; i < 8; i++) {
 			RazredEntity noviRazred = new RazredEntity();
 			noviRazred.setRazred(i + 1);
-			noviRazred.setSkolskaGodinaRazreda(razred.getSkolskaGodinaRazreda());
+			noviRazred.setSkolskaGodinaRazreda(String.valueOf(razred.getPocetakSkolskeGodine()) + "/"
+					+ String.valueOf(razred.getPocetakSkolskeGodine() + 1));
+			noviRazred.setPocetakSkolskeGodine(razred.getPocetakSkolskeGodine());
 			razredRepo.save(noviRazred);
 
 		}
@@ -51,8 +59,8 @@ public class RazredServiceImpl implements RazredService {
 			if (razredEntity.getRazred().equals(razred.getRazred())) {
 				if (razredEntity.getSkolskaGodinaRazreda().equals(razred.getSkolskaGodinaRazreda()))
 
-					return new ResponseEntity<RESTError>(new RESTError("Razred koji pokusavate da kreirte vec postoji."),
-							HttpStatus.BAD_REQUEST);
+					return new ResponseEntity<RESTError>(
+							new RESTError("Razred koji pokusavate da kreirte vec postoji."), HttpStatus.BAD_REQUEST);
 			}
 
 		}

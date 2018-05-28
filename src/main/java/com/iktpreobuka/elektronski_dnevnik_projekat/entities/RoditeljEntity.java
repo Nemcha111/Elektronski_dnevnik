@@ -44,8 +44,10 @@ public class RoditeljEntity {
 	private String emailRoditelja;
 
 	@Column
-	private ETipKorisnika korisniRoditelj = ETipKorisnika.ROLE_RODITELJ;
+	private ETipKorisnika ulogaRoditelja = ETipKorisnika.ROLE_RODITELJ;
 
+	//@JsonManagedReference
+	//@JsonBackReference
 	@JsonIgnore
 	@OneToMany(mappedBy = "roditelj", fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
 	private List<UcenikEntity> deca;
@@ -110,19 +112,19 @@ public class RoditeljEntity {
 		this.deca = deca;
 	}
 
-	public ETipKorisnika getKorisniRoditelj() {
-		return korisniRoditelj;
+	public ETipKorisnika getUlogaRoditelja() {
+		return ulogaRoditelja;
 	}
 
-	public void setKorisniRoditelj(ETipKorisnika korisniRoditelj) {
-		this.korisniRoditelj = korisniRoditelj;
+	public void setUlogaRoditelja(ETipKorisnika korisniRoditelj) {
+		this.ulogaRoditelja = korisniRoditelj;
 	}
 
 	@Override
 	public String toString() {
 		return "RoditeljEntity [idRoditelja=" + idRoditelja + ", imeRoditelja=" + imeRoditelja + ", prezimeRoditelja="
 				+ prezimeRoditelja + ", korisnickoImeRoditelja=" + korisnickoImeRoditelja + ", sifraRoditelja="
-				+ sifraRoditelja + ", emailRoditelja=" + emailRoditelja + ", korisniRoditelj=" + korisniRoditelj
+				+ sifraRoditelja + ", emailRoditelja=" + emailRoditelja + ", ulogaRoditelja=" + ulogaRoditelja
 				+ ", deca=" + deca + "]";
 	}
 

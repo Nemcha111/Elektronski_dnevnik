@@ -45,6 +45,8 @@ public class UcenikEntity {
 	@Column
 	private ETipKorisnika korisnikUcenik = ETipKorisnika.ROLE_UCENIK;
 
+	//@JsonBackReference
+	//@JsonManagedReference
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
 	@JoinColumn(name = "roditelj")
 	private RoditeljEntity roditelj;
