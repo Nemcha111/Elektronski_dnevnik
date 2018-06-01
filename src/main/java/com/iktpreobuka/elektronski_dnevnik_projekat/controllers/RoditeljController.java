@@ -50,6 +50,16 @@ public class RoditeljController {
 		if (result.hasErrors()) {
 			return new ResponseEntity<>(createErrorMessage(result), HttpStatus.BAD_REQUEST);
 		}
+		
+		
+		List<RoditeljEntity> roditelji = (List<RoditeljEntity>) roditeljRepo.findAll();
+
+		for (RoditeljEntity roditeljEntity : roditelji) {
+			if (roditelj.getKorisnickoImeRoditelja().equals(roditeljEntity.getKorisnickoImeRoditelja())) {
+				return new ResponseEntity<RESTError>(new RESTError("Ovo korisnicko ime vec postoji."),
+						HttpStatus.NOT_FOUND);
+			}
+		}
 
 		RoditeljEntity noviRoditelj = new RoditeljEntity();
 

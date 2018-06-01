@@ -24,8 +24,8 @@ public class RazredServiceImpl implements RazredService {
 
 		for (RazredEntity razredEntity : razredi) {
 
-			Integer test1 = razredEntity.getPocetakSkolskeGodine();
-			Integer test2 = razred.getPocetakSkolskeGodine();
+			//Integer test1 = razredEntity.getPocetakSkolskeGodine();
+			//Integer test2 = razred.getPocetakSkolskeGodine();
 
 			//if (razredEntity.getPocetakSkolskeGodine().intValue() ==razred.getPocetakSkolskeGodine().intValue()) {// --NE RADI ZASTO
 			 if (razredEntity.getPocetakSkolskeGodine().equals( razred.getPocetakSkolskeGodine())) {

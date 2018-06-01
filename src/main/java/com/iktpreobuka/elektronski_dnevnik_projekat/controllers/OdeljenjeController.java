@@ -52,6 +52,7 @@ public class OdeljenjeController {
 
 	}
 
+	//TODO Dodaj i koji je razred odeljenje
 	@RequestMapping(value = "/razred/{idRazreda}", method = RequestMethod.POST)
 	public ResponseEntity<?> kreirajeOdeljenja(@Valid @RequestBody OdeljenjeEntity odeljenje,
 			@PathVariable Integer idRazreda, BindingResult result) {

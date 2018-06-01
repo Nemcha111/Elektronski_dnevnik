@@ -97,11 +97,6 @@ public class PredmetEntity {
 	}
 
 
-	@Override
-	public String toString() {
-		return "PredmetEntity [idPredmeta=" + idPredmeta + ", imePredmeta=" + imePredmeta + ", nedeljniFondCasova="
-				+ nedeljniFondCasova + ", razred=" + razred + ", predmetniNastavnici=" + predmetniNastavnici + "]";
-	}
 
 	
 

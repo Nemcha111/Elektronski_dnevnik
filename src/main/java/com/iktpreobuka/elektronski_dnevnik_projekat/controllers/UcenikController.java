@@ -45,6 +45,15 @@ public class UcenikController {
 		if (result.hasErrors()) {
 			return new ResponseEntity<>(createErrorMessage(result), HttpStatus.BAD_REQUEST);
 		}
+		
+		List<UcenikEntity> ucenici = (List<UcenikEntity>) ucenikRepo.findAll();
+
+		for (UcenikEntity ucenikEntity : ucenici) {
+			if (ucenik.getKorisnickoImeUcenika().equals(ucenikEntity.getKorisnickoImeUcenika())) {
+				return new ResponseEntity<RESTError>(new RESTError("Ovo korisnicko ime vec postoji."),
+						HttpStatus.NOT_FOUND);
+			}
+		}
 
 		if (roditeljRepo.findById(idRoditelja).isPresent() == false) {
 

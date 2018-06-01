@@ -27,7 +27,7 @@ public class RoditeljEntity {
 	private Integer idRoditelja;
 
 	@Column
-	@NotNull(message = "Ime ucenika mora biti uneto.")
+	@NotNull(message = "Ime roditelja mora biti uneto.")
 	@Size(min = 2, max = 30, message = "Ime mora biti izmedju {min} i {max} karaktera.")
 	private String imeRoditelja;
 
@@ -120,13 +120,7 @@ public class RoditeljEntity {
 		this.ulogaRoditelja = korisniRoditelj;
 	}
 
-	@Override
-	public String toString() {
-		return "RoditeljEntity [idRoditelja=" + idRoditelja + ", imeRoditelja=" + imeRoditelja + ", prezimeRoditelja="
-				+ prezimeRoditelja + ", korisnickoImeRoditelja=" + korisnickoImeRoditelja + ", sifraRoditelja="
-				+ sifraRoditelja + ", emailRoditelja=" + emailRoditelja + ", ulogaRoditelja=" + ulogaRoditelja
-				+ ", deca=" + deca + "]";
-	}
+
 
 	
 	

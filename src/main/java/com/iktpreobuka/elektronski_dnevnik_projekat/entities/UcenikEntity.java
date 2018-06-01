@@ -47,7 +47,7 @@ public class UcenikEntity {
 
 	//@JsonBackReference
 	//@JsonManagedReference
-	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
 	@JoinColumn(name = "roditelj")
 	private RoditeljEntity roditelj;
 
@@ -135,13 +135,6 @@ public class UcenikEntity {
 		this.korisnikUcenik = korisnikUcenik;
 	}
 
-	@Override
-	public String toString() {
-		return "UcenikEntity [idUcenika=" + idUcenika + ", imeUcenika=" + imeUcenika + ", prezimeUcenika="
-				+ prezimeUcenika + ", korisnickoImeUcenika=" + korisnickoImeUcenika + ", sifraUcenika=" + sifraUcenika
-				+ ", korisnikUcenik=" + korisnikUcenik + ", roditelj=" + roditelj + ", odeljenjeUcenika="
-				+ odeljenjeUcenika + ", ocene=" + ocene + "]";
-	}
 
 	
 

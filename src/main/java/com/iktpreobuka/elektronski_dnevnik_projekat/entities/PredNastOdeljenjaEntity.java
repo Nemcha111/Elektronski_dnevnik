@@ -84,11 +84,6 @@ public class PredNastOdeljenjaEntity { // PredNastOdeljenja = predmetni nastavni
 		this.ocene = ocene;
 	}
 
-	@Override
-	public String toString() {
-		return "PredNastOdeljenjaEntity [idPredNastOdeljenja=" + idPredNastOdeljenja + ", predajePredmet="
-				+ predajePredmet + ", predajeOdeljenju=" + predajeOdeljenju + ", nastavnik=" + nastavnik + ", ocene="
-				+ ocene + "]";
-	}
+
 
 }

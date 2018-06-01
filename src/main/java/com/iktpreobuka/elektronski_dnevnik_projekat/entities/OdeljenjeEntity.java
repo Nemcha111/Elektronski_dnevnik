@@ -37,8 +37,8 @@ public class OdeljenjeEntity {
 
 	
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
-	@JoinColumn(name = "razred")
-	private RazredEntity razred;
+	@JoinColumn(name = "razredOdeljenja")
+	private RazredEntity razredOdeljenja;
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "odeljenjeUcenika", fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
@@ -69,12 +69,12 @@ public class OdeljenjeEntity {
 	}
 
 
-	public RazredEntity getRazred() {
-		return razred;
+	public RazredEntity getRazredOdeljenja() {
+		return razredOdeljenja;
 	}
 
-	public void setRazred(RazredEntity razred) {
-		this.razred = razred;
+	public void setRazredOdeljenja(RazredEntity razredOdeljenja) {
+		this.razredOdeljenja = razredOdeljenja;
 	}
 
 	public List<UcenikEntity> getUcenici() {
@@ -96,7 +96,7 @@ public class OdeljenjeEntity {
 	@Override
 	public String toString() {
 		return "OdeljenjeEntity [idOdeljenja=" + idOdeljenja + ", imeOdeljenja=" + imeOdeljenja
-				+ ", razred=" + razred + ", ucenici=" + ucenici
+				+ ", razredOdeljenja=" + razredOdeljenja + ", ucenici=" + ucenici
 				+ ", predmetniNastavniciOdeljenja=" + predmetniNastavniciOdeljenja + "]";
 	}
 

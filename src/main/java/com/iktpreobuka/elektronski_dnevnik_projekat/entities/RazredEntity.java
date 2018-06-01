@@ -51,7 +51,7 @@ public class RazredEntity {
 	
 	
 	@JsonIgnore
-	@OneToMany (mappedBy= "razred", fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
+	@OneToMany (mappedBy= "razredOdeljenja", fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
 	private List<OdeljenjeEntity> odeljenja;
 	
 	

@@ -31,7 +31,7 @@ public class OdeljenjeServiceImpl implements OdeljenjeService {
 
 		for (OdeljenjeEntity odeljenjeEntity : odeljenja) {
 
-			if (odeljenjeEntity.getRazred().getIdRazreda() == idRazreda) {
+			if (odeljenjeEntity.getRazredOdeljenja().getIdRazreda() == idRazreda) {
 				if (odeljenjeEntity.getImeOdeljenja().equals(odeljenje.getImeOdeljenja()))
 
 					return new ResponseEntity<RESTError>(
@@ -50,7 +50,7 @@ public class OdeljenjeServiceImpl implements OdeljenjeService {
 		RazredEntity razred = razredRepo.findById(idRazreda).get();
 
 		novoOdeljenje.setImeOdeljenja(odeljenje.getImeOdeljenja());
-		novoOdeljenje.setRazred(razredRepo.save(razred));
+		novoOdeljenje.setRazredOdeljenja(razredRepo.save(razred));
 
 		odeljenjeRepo.save(novoOdeljenje);
 

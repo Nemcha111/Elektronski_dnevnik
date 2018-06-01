@@ -24,10 +24,10 @@ import com.iktpreobuka.elektronski_dnevnik_projekat.util.RESTError;
 @RestController
 @RequestMapping(path = "/API/version1/nastavnik")
 public class NastavnikController {
-	
+
 	@Autowired
 	private NastavnikRepository nastavnikRepo;
-	
+
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<?> pregledSvihNastavnika() {
 
@@ -43,13 +43,21 @@ public class NastavnikController {
 		return new ResponseEntity<Iterable<NastavnikEntity>>(nastavnikRepo.findAll(), HttpStatus.OK);
 
 	}
-	
-	
+
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<?> dodajNovogNastavnika(@Valid @RequestBody NastavnikEntity nastavnik, BindingResult result) {
 
 		if (result.hasErrors()) {
 			return new ResponseEntity<>(createErrorMessage(result), HttpStatus.BAD_REQUEST);
+
+		}
+		List<NastavnikEntity> nastavnici = (List<NastavnikEntity>) nastavnikRepo.findAll();
+
+		for (NastavnikEntity nastavnikEntity : nastavnici) {
+			if (nastavnik.getKorisnickoImeNastavnika().equals(nastavnikEntity.getKorisnickoImeNastavnika())) {
+				return new ResponseEntity<RESTError>(new RESTError("Ovo korisnicko ime vec postoji."),
+						HttpStatus.NOT_FOUND);
+			}
 		}
 
 		NastavnikEntity noviNastavnik = new NastavnikEntity();
@@ -58,13 +66,10 @@ public class NastavnikController {
 		noviNastavnik.setPrezimeNastavnika(nastavnik.getPrezimeNastavnika());
 		noviNastavnik.setKorisnickoImeNastavnika(nastavnik.getKorisnickoImeNastavnika());
 		noviNastavnik.setSifraNastavnika(nastavnik.getSifraNastavnika());
-		
 
 		return new ResponseEntity<NastavnikEntity>(nastavnikRepo.save(noviNastavnik), HttpStatus.OK);
 	}
 
-	
-	
 	@RequestMapping(value = "/izmena/{idNastavnika}", method = RequestMethod.PUT)
 	public ResponseEntity<?> izmenaNastavnika(@Valid @RequestBody NastavnikEntity noviNastavnik,
 			@PathVariable Integer idNastavnika, BindingResult result) {
@@ -84,11 +89,10 @@ public class NastavnikController {
 		nastavnik.setImeNastavnika(noviNastavnik.getImeNastavnika());
 		nastavnik.setPrezimeNastavnika(noviNastavnik.getPrezimeNastavnika());
 		nastavnik.setKorisnickoImeNastavnika(noviNastavnik.getKorisnickoImeNastavnika());
-		
 
 		return new ResponseEntity<NastavnikEntity>(nastavnikRepo.save(nastavnik), HttpStatus.OK);
 	}
-	
+
 	@RequestMapping(value = "/obrisi/{idNastavnika}", method = RequestMethod.DELETE)
 	public ResponseEntity<?> brisanjeNastavnika(@PathVariable Integer idNastavnika) {
 
@@ -109,11 +113,10 @@ public class NastavnikController {
 		return new ResponseEntity<NastavnikEntity>(roditelj, HttpStatus.OK);
 
 	}
-	
+
 	@RequestMapping(value = "/pronadjiPremaId/{idNastavnika}", method = RequestMethod.GET)
 	public ResponseEntity<?> pronadjiNastavnikaPremaId(@PathVariable Integer idNastavnika) {
 
-		
 		if (nastavnikRepo.findById(idNastavnika).isPresent() == false) {
 
 			return new ResponseEntity<RESTError>(new RESTError("Nastavnik sa prosledjenim ID brojem ne postoji."),
@@ -124,7 +127,7 @@ public class NastavnikController {
 		return new ResponseEntity<NastavnikEntity>(nastavnik, HttpStatus.OK);
 
 	}
-	
+
 	private String createErrorMessage(BindingResult result) {
 		return result.getAllErrors().stream().map(ObjectError::getDefaultMessage).collect(Collectors.joining(" "));
 	}

@@ -8,77 +8,80 @@ import javax.persistence.Table;
 
 import com.iktpreobuka.elektronski_dnevnik_projekat.enumerations.ETipKorisnika;
 
-@Entity
-@Table (name ="Administratori")
-public class AdminEntity {
-	
-	
-	@GeneratedValue
-	@Id
-	private Integer idAdmina;
 
-	@Column
-	private String korisnickoImeAdmina;
+	@Entity
+	@Table (name ="Administratori")
+	public class AdminEntity {
+		
+		
+		@GeneratedValue
+		@Id
+		private Integer idAdmina;
 
-	
-	@Column
-	private String sifraAdmina;
-	
-	
-	@Column
-	private ETipKorisnika korisnikAdmin = ETipKorisnika.ROLE_ADMIN;
+		@Column
+		private String korisnickoImeAdmina;
 
-
-	public AdminEntity() {
-		super();
-	}
+		
+		@Column
+		private String sifraAdmina;
+		
+		
+		@Column
+		private ETipKorisnika korisnikAdmina = ETipKorisnika.ROLE_ADMIN;
 
 
-	public Integer getIdAdmina() {
-		return idAdmina;
-	}
+		public AdminEntity() {
+			super();
+		}
 
 
-	public void setIdAdmina(Integer idAdmina) {
-		this.idAdmina = idAdmina;
-	}
+		public Integer getIdAdmina() {
+			return idAdmina;
+		}
 
 
-	public String getKorisnickoImeAdmina() {
-		return korisnickoImeAdmina;
-	}
+		public void setIdAdmina(Integer idAdmina) {
+			this.idAdmina = idAdmina;
+		}
 
 
-	public void setKorisnickoImeAdmina(String korisnickoImeAdmina) {
-		this.korisnickoImeAdmina = korisnickoImeAdmina;
-	}
+		public String getKorisnickoImeAdmina() {
+			return korisnickoImeAdmina;
+		}
 
 
-	public String getSifraAdmina() {
-		return sifraAdmina;
-	}
+		public void setKorisnickoImeAdmina(String korisnickoImeAdmina) {
+			this.korisnickoImeAdmina = korisnickoImeAdmina;
+		}
 
 
-	public void setSifraAdmina(String sifraAdmina) {
-		this.sifraAdmina = sifraAdmina;
-	}
+		public String getSifraAdmina() {
+			return sifraAdmina;
+		}
 
 
-	public ETipKorisnika getKorisnikAdmin() {
-		return korisnikAdmin;
-	}
+		public void setSifraAdmina(String sifraAdmina) {
+			this.sifraAdmina = sifraAdmina;
+		}
 
 
-	public void setKorisnikAdmin(ETipKorisnika korisnikAdmin) {
-		this.korisnikAdmin = korisnikAdmin;
-	}
+		public ETipKorisnika getKorisnikAdmina() {
+			return korisnikAdmina;
+		}
 
 
-	@Override
-	public String toString() {
-		return "AdminEntity [idAdmina=" + idAdmina + ", korisnickoImeAdmina=" + korisnickoImeAdmina + ", sifraAdmina="
-				+ sifraAdmina + ", korisnikAdmin=" + korisnikAdmin + "]";
-	}
+		public void setKorisnikAdmina(ETipKorisnika korisnikAdmina) {
+			this.korisnikAdmina = korisnikAdmina;
+		}
 
+
+		@Override
+		public String toString() {
+			return "AdminEntity [idAdmina=" + idAdmina + ", korisnickoImeAdmina=" + korisnickoImeAdmina
+					+ ", sifraAdmina=" + sifraAdmina + ", korisnikAdmina=" + korisnikAdmina + "]";
+		}
+		
+		
+		
 
 }
