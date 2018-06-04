@@ -15,8 +15,7 @@ import com.iktpreobuka.elektronski_dnevnik_projekat.entities.NastavnikEntity;
 import com.iktpreobuka.elektronski_dnevnik_projekat.entities.OdeljenjeEntity;
 import com.iktpreobuka.elektronski_dnevnik_projekat.entities.PredNastOdeljenjaEntity;
 import com.iktpreobuka.elektronski_dnevnik_projekat.entities.PredmetEntity;
-import com.iktpreobuka.elektronski_dnevnik_projekat.entities.RoditeljEntity;
-import com.iktpreobuka.elektronski_dnevnik_projekat.entities.UcenikEntity;
+
 import com.iktpreobuka.elektronski_dnevnik_projekat.repositories.NastavnikRepository;
 import com.iktpreobuka.elektronski_dnevnik_projekat.repositories.OdeljenjeRepository;
 import com.iktpreobuka.elektronski_dnevnik_projekat.repositories.PredNastOdeljenjaRepository;
@@ -149,8 +148,7 @@ public class PredNastOdeljenjaController {
 		return new ResponseEntity<PredNastOdeljenjaEntity>(predNastOdeljenjaRepo.save(pno), HttpStatus.OK);
 
 	}
-	
-	
+
 	@RequestMapping(value = "/izmena/{idPredNastOdeljenja}/nastavnik/{idNastavnika}", method = RequestMethod.PUT)
 	public ResponseEntity<?> izmenaNastavnikaPredNastOdeljenja(@PathVariable Integer idPredNastOdeljenja,
 			@PathVariable Integer idNastavnika) {
@@ -176,8 +174,7 @@ public class PredNastOdeljenjaController {
 		return new ResponseEntity<PredNastOdeljenjaEntity>(predNastOdeljenjaRepo.save(pno), HttpStatus.OK);
 
 	}
-	
-	
+
 	@RequestMapping(value = "/izmena/{idPredNastOdeljenja}/odeljenje/{idOdeljenja}", method = RequestMethod.PUT)
 	public ResponseEntity<?> izmenaOdeljenjaPredNastOdeljenja(@PathVariable Integer idPredNastOdeljenja,
 			@PathVariable Integer idOdeljenja) {

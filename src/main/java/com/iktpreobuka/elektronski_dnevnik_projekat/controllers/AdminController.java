@@ -1,6 +1,5 @@
 package com.iktpreobuka.elektronski_dnevnik_projekat.controllers;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -11,14 +10,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
+
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
 import org.springframework.web.bind.annotation.RestController;
 
 import com.iktpreobuka.elektronski_dnevnik_projekat.entities.AdminEntity;
-import com.iktpreobuka.elektronski_dnevnik_projekat.entities.NastavnikEntity;
+
 import com.iktpreobuka.elektronski_dnevnik_projekat.repositories.AdminRepository;
+import com.iktpreobuka.elektronski_dnevnik_projekat.repositories.UcenikRepository;
+
 import com.iktpreobuka.elektronski_dnevnik_projekat.util.RESTError;
 
 @RestController
@@ -27,7 +30,10 @@ public class AdminController {
 
 	@Autowired
 	public AdminRepository adminRepo;
-	
+
+	@Autowired
+	public UcenikRepository ucenikRepo;
+
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<?> dodajNovogAdmina(@Valid @RequestBody AdminEntity admin, BindingResult result) {
 
@@ -46,23 +52,19 @@ public class AdminController {
 
 		AdminEntity noviAdmin = new AdminEntity();
 
-		
 		noviAdmin.setKorisnickoImeAdmina(admin.getKorisnickoImeAdmina());
 		noviAdmin.setSifraAdmina(admin.getSifraAdmina());
 
 		return new ResponseEntity<AdminEntity>(adminRepo.save(noviAdmin), HttpStatus.OK);
 	}
 
-	
-	
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<?> prikaziSveAdmine() {
 
-		
 		return new ResponseEntity<Iterable<AdminEntity>>(adminRepo.findAll(), HttpStatus.OK);
-		
+
 	}
-	
+
 	private String createErrorMessage(BindingResult result) {
 		return result.getAllErrors().stream().map(ObjectError::getDefaultMessage).collect(Collectors.joining(" "));
 	}

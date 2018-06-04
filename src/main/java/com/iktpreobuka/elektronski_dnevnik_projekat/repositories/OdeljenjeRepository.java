@@ -7,3 +7,4 @@ import com.iktpreobuka.elektronski_dnevnik_projekat.entities.OdeljenjeEntity;
 public interface OdeljenjeRepository extends CrudRepository<OdeljenjeEntity, Integer> {
 
 }
+

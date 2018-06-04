@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.iktpreobuka.elektronski_dnevnik_projekat.enumerations.ETipOcene;
 
 @Entity
@@ -33,11 +34,30 @@ public class OcenaEntity {
 	private ETipOcene tipOcene;
 	
 	
+	@Column
+	private String predmet;
+	
+	@Column
+	private String nastavnik;
+	
+	@Column (name = "Ime_ucenika")
+	private String punoImeUcenika;
+	
+	@Column
+	private Integer idUcenika;
+	
+	@Column
+	private String skolskaGodinaOcene;
+	
+	
+	
+	@JsonIgnore
 	@ManyToOne (cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
 	@JoinColumn (name = "ocenaUcenika")
 	private UcenikEntity ocenaUcenika;
 	
 	
+	@JsonIgnore
 	@ManyToOne (cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
 	@JoinColumn (name = "ocenioPredmetniNastavnik")
 	private PredNastOdeljenjaEntity ocenioPredmetniNastavnik;
@@ -88,6 +108,46 @@ public class OcenaEntity {
 	}
 
 
+	public String getPredmet() {
+		return predmet;
+	}
+
+
+	public void setPredmet(String predmet) {
+		this.predmet = predmet;
+	}
+
+
+	public String getNastavnik() {
+		return nastavnik;
+	}
+
+
+	public void setNastavnik(String nastavnik) {
+		this.nastavnik = nastavnik;
+	}
+
+
+	public String getPunoImeUcenika() {
+		return punoImeUcenika;
+	}
+
+
+	public void setPunoImeUcenika(String punoImeUcenika) {
+		this.punoImeUcenika = punoImeUcenika;
+	}
+
+
+	public Integer getIdUcenika() {
+		return idUcenika;
+	}
+
+
+	public void setIdUcenika(Integer idUcenika) {
+		this.idUcenika = idUcenika;
+	}
+
+
 	public UcenikEntity getOcenaUcenika() {
 		return ocenaUcenika;
 	}
@@ -106,14 +166,28 @@ public class OcenaEntity {
 	public void setOcenioPredmetniNastavnik(PredNastOdeljenjaEntity ocenioPredmetniNastavnik) {
 		this.ocenioPredmetniNastavnik = ocenioPredmetniNastavnik;
 	}
+	
+	
+	
+
+
+	public String getSkolskaGodinaOcene() {
+		return skolskaGodinaOcene;
+	}
+
+
+	public void setSkolskaGodinaOcene(String skolskaGodinaOcene) {
+		this.skolskaGodinaOcene = skolskaGodinaOcene;
+	}
 
 
 	@Override
 	public String toString() {
 		return "OcenaEntity [idOcene=" + idOcene + ", ocena=" + ocena + ", datumOcene=" + datumOcene + ", tipOcene="
-				+ tipOcene + ", ocenaUcenika=" + ocenaUcenika + ", ocenioPredmetniNastavnik=" + ocenioPredmetniNastavnik
-				+ "]";
+				+ tipOcene + ", predmet=" + predmet + ", nastavnik=" + nastavnik + ", punoImeUcenika=" + punoImeUcenika
+				+ ", idUcenika=" + idUcenika + "]";
 	}
+
 
 
 	

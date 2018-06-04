@@ -1,11 +1,14 @@
 package com.iktpreobuka.elektronski_dnevnik_projekat.controllers;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.iktpreobuka.elektronski_dnevnik_projekat.entities.OcenaEntity;
@@ -25,6 +29,7 @@ import com.iktpreobuka.elektronski_dnevnik_projekat.repositories.OcenaRepository
 import com.iktpreobuka.elektronski_dnevnik_projekat.repositories.PredNastOdeljenjaRepository;
 import com.iktpreobuka.elektronski_dnevnik_projekat.repositories.UcenikRepository;
 import com.iktpreobuka.elektronski_dnevnik_projekat.services.EmailService;
+import com.iktpreobuka.elektronski_dnevnik_projekat.services.OcenaService;
 import com.iktpreobuka.elektronski_dnevnik_projekat.util.RESTError;
 
 @RestController
@@ -41,8 +46,14 @@ public class OcenaController {
 	public PredNastOdeljenjaRepository predNastOdeljenjaRepo;
 	
 	@Autowired
+	public OcenaService ocenaService;
+	
+	@Autowired
 	public EmailService emailService;
 
+	private final Logger logger = (Logger)LoggerFactory.getLogger(this.getClass());
+	
+	
 	@RequestMapping(value = "/ucenik/{idUcenika}/pred-nast-odeljenja/{idPredNastOdeljenja}", method = RequestMethod.POST)
 	public ResponseEntity<?> kreirajeOcene(@Valid @RequestBody OcenaEntity ocena, @PathVariable Integer idUcenika,
 			@PathVariable Integer idPredNastOdeljenja, BindingResult result) throws Exception {
@@ -74,11 +85,17 @@ public class OcenaController {
 		}
 
 		novaOcena.setOcena(ocena.getOcena());
-		novaOcena.setDatumOcene(ocena.getDatumOcene());
+		novaOcena.setDatumOcene(new Date());
 		novaOcena.setTipOcene(ETipOcene.REDOVNA);
 		novaOcena.setOcenaUcenika(ucenik);
 		novaOcena.setOcenioPredmetniNastavnik(pno);
-
+		novaOcena.setPredmet(pno.getPredajePredmet().getImePredmeta());
+		novaOcena.setNastavnik(pno.getNastavnik().getImeNastavnika()+" "+ pno.getNastavnik().getPrezimeNastavnika());
+		novaOcena.setPunoImeUcenika(ucenik.getImeUcenika()+" " + ucenik.getPrezimeUcenika());
+		novaOcena.setIdUcenika(idUcenika);
+		novaOcena.setSkolskaGodinaOcene(ucenik.getOdeljenjeUcenika().getRazredOdeljenja().getSkolskaGodinaRazreda());
+		
+		
 		OcenaEntity ocenaEntity = ocenaRepo.save(novaOcena);
 		
 		
@@ -90,6 +107,12 @@ public class OcenaController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<?> pregledSvihOcena() {
 
+		
+		logger.debug("This is a debug message");
+		logger.info("This is an info message");
+		logger.warn("This is a warn message");
+		logger.error("This is an error message");
+		
 		List<OcenaEntity> ocene = new ArrayList<>();
 
 		ocene = (List<OcenaEntity>) ocenaRepo.findAll();
@@ -136,13 +159,40 @@ public class OcenaController {
 		OcenaEntity ocena = ocenaRepo.findById(idOcene).get();
 		
 		ocena.setOcena(novaOcena.getOcena());
-		ocena.setDatumOcene(novaOcena.getDatumOcene());
-	
+		ocena.setDatumOcene(new Date());
+		//ocena.setSkolskaGodinaOcene(novaOcena.getSkolskaGodinaOcene());
+		
 		return new ResponseEntity<OcenaEntity>(ocenaRepo.save(ocena), HttpStatus.OK);
 		
 		
 		
 	}
+	
+	
+	@RequestMapping (value = "/zakljucna-ocena-polugodiste", method = RequestMethod.POST)
+	public ResponseEntity<?> zakljucivanjeOcenePolugodiste (@RequestParam String skolskaGodina) { 
+		
+		//TODO proveri da li skolska godina postoji
+
+		return ocenaService.zakljucivanjeOcenaPolugodisete(skolskaGodina);
+		
+	}
+	
+	
+	@RequestMapping (value = "/zakljucna-ocena-zavrsnih", method = RequestMethod.POST)
+	public ResponseEntity<?> zakljucivanjeOcenaZavrsnih (@RequestParam String skolskaGodina) { 
+
+		
+		//TODO proveri da li skolska godina postoji
+
+		return ocenaService.zakljucivanjeOcenaZavrsnih(skolskaGodina);
+		
+		
+		
+	}
+	
+	//TODO napravi end pointe za brisanje zavrsnih i ocena polugodista (iskoristi prethodne metode)
+	
 	private String createErrorMessage(BindingResult result) {
 		return result.getAllErrors().stream().map(ObjectError::getDefaultMessage).collect(Collectors.joining(" "));
 	}

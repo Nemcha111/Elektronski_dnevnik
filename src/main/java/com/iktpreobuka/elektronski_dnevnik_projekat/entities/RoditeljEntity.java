@@ -46,8 +46,6 @@ public class RoditeljEntity {
 	@Column
 	private ETipKorisnika ulogaRoditelja = ETipKorisnika.ROLE_RODITELJ;
 
-	//@JsonManagedReference
-	//@JsonBackReference
 	@JsonIgnore
 	@OneToMany(mappedBy = "roditelj", fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
 	private List<UcenikEntity> deca;
@@ -119,10 +117,5 @@ public class RoditeljEntity {
 	public void setUlogaRoditelja(ETipKorisnika korisniRoditelj) {
 		this.ulogaRoditelja = korisniRoditelj;
 	}
-
-
-
-	
-	
 
 }
