@@ -9,6 +9,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,6 +29,7 @@ public class NastavnikController {
 	@Autowired
 	private NastavnikRepository nastavnikRepo;
 
+	@Secured("ROLE_ADMIN")
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<?> pregledSvihNastavnika() {
 
@@ -44,6 +46,7 @@ public class NastavnikController {
 
 	}
 
+	@Secured("ROLE_ADMIN")
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<?> dodajNovogNastavnika(@Valid @RequestBody NastavnikEntity nastavnik, BindingResult result) {
 
@@ -70,6 +73,7 @@ public class NastavnikController {
 		return new ResponseEntity<NastavnikEntity>(nastavnikRepo.save(noviNastavnik), HttpStatus.OK);
 	}
 
+	@Secured("ROLE_ADMIN")
 	@RequestMapping(value = "/izmena/{idNastavnika}", method = RequestMethod.PUT)
 	public ResponseEntity<?> izmenaNastavnika(@Valid @RequestBody NastavnikEntity noviNastavnik,
 			@PathVariable Integer idNastavnika, BindingResult result) {
@@ -93,6 +97,7 @@ public class NastavnikController {
 		return new ResponseEntity<NastavnikEntity>(nastavnikRepo.save(nastavnik), HttpStatus.OK);
 	}
 
+	@Secured("ROLE_ADMIN")
 	@RequestMapping(value = "/obrisi/{idNastavnika}", method = RequestMethod.DELETE)
 	public ResponseEntity<?> brisanjeNastavnika(@PathVariable Integer idNastavnika) {
 
@@ -114,6 +119,7 @@ public class NastavnikController {
 
 	}
 
+	@Secured("ROLE_ADMIN")
 	@RequestMapping(value = "/pronadjiPremaId/{idNastavnika}", method = RequestMethod.GET)
 	public ResponseEntity<?> pronadjiNastavnikaPremaId(@PathVariable Integer idNastavnika) {
 
@@ -125,6 +131,38 @@ public class NastavnikController {
 
 		NastavnikEntity nastavnik = nastavnikRepo.findById(idNastavnika).get();
 		return new ResponseEntity<NastavnikEntity>(nastavnik, HttpStatus.OK);
+
+	}
+
+	@Secured("ROLE_ADMIN")
+	@RequestMapping(value = "/ime/{imeNastavnika}/prezime/{prezimeNastavnika}", method = RequestMethod.GET)
+	public ResponseEntity<?> pronadjiNastavnikaPremaImenuIPrezimenu(@PathVariable String imeNastavnika,
+			@PathVariable String prezimeNastavnika) {
+
+		List<NastavnikEntity> nastavnici = nastavnikRepo.findByImeNastavnika(imeNastavnika);
+		
+		
+		if ((nastavnici.size() == 0)) {
+
+			return new ResponseEntity<RESTError>(new RESTError("Nastavnik sa prosledjenim imenom ne postoji."),
+					HttpStatus.NOT_FOUND);
+		} 
+//		if ((nastavnikRepo.findByPrezimeNastavnika(prezimeNastavnika)) == null) {
+//			return new ResponseEntity<RESTError>(new RESTError("Nastavnik sa prosledjenim prezimenom ne postoji."),
+//					HttpStatus.NOT_FOUND);
+//
+//		}
+
+		for (NastavnikEntity nastavnikEntity : nastavnici) {
+			if (!nastavnikEntity.getPrezimeNastavnika().equalsIgnoreCase(prezimeNastavnika))
+				 {
+			return new ResponseEntity<RESTError>(
+					new RESTError("Nastavnik sa prosledjenim imenom i prezimenom ne postoji."), HttpStatus.NOT_FOUND);
+		}
+			
+		}
+
+		return new ResponseEntity<Iterable<NastavnikEntity>>(nastavnici, HttpStatus.OK);
 
 	}
 

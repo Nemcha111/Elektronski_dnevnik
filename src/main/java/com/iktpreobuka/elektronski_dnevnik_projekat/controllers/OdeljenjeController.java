@@ -9,6 +9,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,6 +37,8 @@ public class OdeljenjeController {
 	@Autowired
 	public OdeljenjeService odeljenjeService;
 	
+	
+	@Secured("ROLE_ADMIN") 
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<?> prikaziSvaOdeljenja() {
 
@@ -52,7 +55,8 @@ public class OdeljenjeController {
 
 	}
 
-	//TODO Dodaj i koji je razred odeljenje
+
+	@Secured("ROLE_ADMIN") 
 	@RequestMapping(value = "/razred/{idRazreda}", method = RequestMethod.POST)
 	public ResponseEntity<?> kreirajeOdeljenja(@Valid @RequestBody OdeljenjeEntity odeljenje,
 			@PathVariable Integer idRazreda, BindingResult result) {
@@ -64,7 +68,33 @@ public class OdeljenjeController {
 		return odeljenjeService.proveraIKreiranjeOdeljenja(odeljenje, idRazreda);
 
 	}
+	
+	
+	@Secured("ROLE_ADMIN") 
+	@RequestMapping(value = "/izmena/{idOdeljenja}", method = RequestMethod.PUT)
+	public ResponseEntity<?> izmenaPredmeta(@Valid @RequestBody OdeljenjeEntity novoOdeljenje,
+			@PathVariable Integer idOdeljenja, BindingResult result) {
 
+		if (result.hasErrors()) {
+			return new ResponseEntity<>(createErrorMessage(result), HttpStatus.BAD_REQUEST);
+		}
+
+		if (odeljenjeRepo.findById(idOdeljenja).isPresent() == false) {
+
+			return new ResponseEntity<RESTError>(new RESTError("Ocena sa prosledjenim ID brojem ne postoji."),
+					HttpStatus.NOT_FOUND);
+		}
+
+		OdeljenjeEntity odeljenje = odeljenjeRepo.findById(idOdeljenja).get();
+
+		odeljenje.setImeOdeljenja(novoOdeljenje.getImeOdeljenja());
+		
+
+		return new ResponseEntity<OdeljenjeEntity>(odeljenjeRepo.save(odeljenje), HttpStatus.OK);
+	}
+
+	
+	@Secured("ROLE_ADMIN") 
 	@RequestMapping(value = "/obrisi/{idOdeljenja}", method = RequestMethod.DELETE)
 	public ResponseEntity<?> brisanjeOdeljenja(@PathVariable Integer idOdeljenja) {
 
@@ -86,10 +116,10 @@ public class OdeljenjeController {
 		odeljenjeRepo.deleteById(idOdeljenja);
 		return new ResponseEntity<OdeljenjeEntity>(odeljenje, HttpStatus.OK);
 		
-
 	}
 	
 
+	@Secured("ROLE_ADMIN") 
 	@RequestMapping(value = "/pronadjiPremaId/{idOdeljenja}", method = RequestMethod.GET)
 	public ResponseEntity<?> pronadjiOdeljenjePremaId(@PathVariable Integer idOdeljenja) {
 

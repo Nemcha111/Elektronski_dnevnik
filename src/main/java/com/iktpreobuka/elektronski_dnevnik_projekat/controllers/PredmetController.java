@@ -9,6 +9,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,7 +33,9 @@ public class PredmetController {
 
 	@Autowired
 	public RazredRepository razredRepo;
+	
 
+	@Secured("ROLE_ADMIN") 
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<?> prikaziSvePredmete() {
 
@@ -49,6 +52,7 @@ public class PredmetController {
 
 	}
 
+	@Secured("ROLE_ADMIN") 
 	@RequestMapping(value = "/razred/{idRazreda}", method = RequestMethod.POST)
 	public ResponseEntity<?> kreirajePredmeta(@Valid @RequestBody PredmetEntity predmet,
 			@PathVariable Integer idRazreda, BindingResult result) {
@@ -86,6 +90,8 @@ public class PredmetController {
 
 	}
 	
+	
+	@Secured("ROLE_ADMIN") 
 	@RequestMapping(value = "/izmena/{idPredmeta}", method = RequestMethod.PUT)
 	public ResponseEntity<?> izmenaPredmeta(@Valid @RequestBody PredmetEntity noviPredmet,
 			@PathVariable Integer idPredmeta, BindingResult result) {
@@ -111,7 +117,7 @@ public class PredmetController {
 	}
 
 	
-
+	@Secured("ROLE_ADMIN") 
 	@RequestMapping(value = "/obrisi/{idPredmeta}", method = RequestMethod.DELETE)
 	public ResponseEntity<?> brisanjePredmet(@PathVariable Integer idPredmeta) {
 
@@ -133,6 +139,8 @@ public class PredmetController {
 
 	}
 	
+	
+	@Secured("ROLE_ADMIN") 
 	@RequestMapping(value = "/pronadjiPremaId/{idPredmeta}", method = RequestMethod.GET)
 	public ResponseEntity<?> pronadjiPredmetPremaId(@PathVariable Integer idPredmeta) {
 

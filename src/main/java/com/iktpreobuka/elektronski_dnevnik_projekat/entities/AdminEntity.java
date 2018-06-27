@@ -7,6 +7,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import com.iktpreobuka.elektronski_dnevnik_projekat.enumerations.ETipKorisnika;
 
@@ -19,12 +21,16 @@ public class AdminEntity {
 	private Integer idAdmina;
 
 	@Column
+	@NotNull(message = "Korisnicko ime mora biti uneto.")
+	@Size(min = 2, max = 30, message = "Korisnicko ime mora biti izmedju {min} i {max} karaktera.")
 	private String korisnickoImeAdmina;
 
 	@Column
+	@NotNull(message = "Sifra mora biti uneta.")
+	@Size(min = 2, max = 30, message = "Sifra mora biti izmedju {min} i {max} karaktera.")
 	private String sifraAdmina;
 
-	@Column
+	@Column (name = "uloga_admina")
 	private ETipKorisnika korisnikAdmina = ETipKorisnika.ROLE_ADMIN;
 
 	public AdminEntity() {

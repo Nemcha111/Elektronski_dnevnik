@@ -8,6 +8,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 
@@ -34,6 +35,7 @@ public class AdminController {
 	@Autowired
 	public UcenikRepository ucenikRepo;
 
+	@Secured("ROLE_ADMIN") 
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<?> dodajNovogAdmina(@Valid @RequestBody AdminEntity admin, BindingResult result) {
 
@@ -58,6 +60,7 @@ public class AdminController {
 		return new ResponseEntity<AdminEntity>(adminRepo.save(noviAdmin), HttpStatus.OK);
 	}
 
+	@Secured("ROLE_ADMIN") 
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<?> prikaziSveAdmine() {
 

@@ -12,6 +12,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -26,9 +29,13 @@ public class PredmetEntity {
 	private Integer idPredmeta;
 
 	@Column
+	//TODO kreirati patern za unos imena (rec + jednocifren broj)
+	@NotNull(message = "Ime predmeta mora biti uneto.")
 	private String imePredmeta;
 
 	@Column
+	@Max(value = 5, message = "Nedeljni fond casova mora biti unet kao jednocifren broj izmedju 1 i 5.")
+	@Min(value = 1, message = "Nedeljni fond casova mora biti unet kao jednocifren broj izmedju 1 i 5.")
 	private Integer nedeljniFondCasova;
 	
 	

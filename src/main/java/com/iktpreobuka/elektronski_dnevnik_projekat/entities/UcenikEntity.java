@@ -34,19 +34,25 @@ public class UcenikEntity {
 	private String imeUcenika;
 
 	@Column
+	@NotNull(message = "Prezime ucenika mora biti uneto.")
+	@Size(min = 2, max = 30, message = "Prezime mora biti izmedju {min} i {max} karaktera.")
 	private String prezimeUcenika;
 
 	@Column
+	@NotNull(message = "Korisnicko ime ucenika mora biti uneto.")
+	@Size(min = 5, max = 20, message = "Korisnicko ime mora biti izmedju {min} i {max} karaktera.")
 	private String korisnickoImeUcenika;
 
 	@Column
+	@NotNull(message = "Sifra ucenika mora biti uneto.")
+	@Size(min = 5, max = 20, message = "Sifra mora biti izmedju {min} i {max} karaktera.")
 	private String sifraUcenika;
 
 	@Column
-	private ETipKorisnika korisnikUcenik = ETipKorisnika.ROLE_UCENIK;
+	private ETipKorisnika ulogaUcenika = ETipKorisnika.ROLE_UCENIK;
 
-	//@JsonBackReference
-	//@JsonManagedReference
+
+	
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
 	@JoinColumn(name = "roditelj")
 	private RoditeljEntity roditelj;
@@ -128,11 +134,11 @@ public class UcenikEntity {
 	}
 
 	public ETipKorisnika getKorisnikUcenik() {
-		return korisnikUcenik;
+		return ulogaUcenika;
 	}
 
 	public void setKorisnikUcenik(ETipKorisnika korisnikUcenik) {
-		this.korisnikUcenik = korisnikUcenik;
+		this.ulogaUcenika = korisnikUcenik;
 	}
 
 

@@ -9,6 +9,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,7 +32,9 @@ public class RazredController {
 
 	@Autowired
 	private RazredService razredService;
+	
 
+	@Secured("ROLE_ADMIN") 
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<?> prikaziSveRazrede() {
 
@@ -48,6 +51,7 @@ public class RazredController {
 
 	}
 
+	@Secured("ROLE_ADMIN") 
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<?> kreirajRazrede(@Valid @RequestBody RazredEntity razred, BindingResult result) {
 
@@ -59,6 +63,7 @@ public class RazredController {
 
 	}
 
+	@Secured("ROLE_ADMIN") 
 	@RequestMapping(value = "/obrisi/{idRazreda}", method = RequestMethod.DELETE)
 	public ResponseEntity<?> brisanjeRazreda(@PathVariable Integer idRazreda) {
 
@@ -82,6 +87,7 @@ public class RazredController {
 
 	}
 
+	@Secured("ROLE_ADMIN") 
 	@RequestMapping(path = "/pojedinacni", method = RequestMethod.POST)
 	public ResponseEntity<?> kreiranjePojedinacnogRazreda(@Valid @RequestBody RazredEntity razred,
 			BindingResult result) {
@@ -115,6 +121,7 @@ public class RazredController {
 	}
 	
 	
+	@Secured("ROLE_ADMIN") 
 	@RequestMapping(value = "/pronadjiPremaId/{idRazreda}", method = RequestMethod.GET)
 	public ResponseEntity<?> pronadjiRazredPremaId(@PathVariable Integer idRazreda) {
 

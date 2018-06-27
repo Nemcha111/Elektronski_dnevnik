@@ -12,6 +12,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -29,22 +30,21 @@ public class RazredEntity {
 	private Integer idRazreda;
 	
 	@Column
-//	@NotNull(message = "razred mora biti unet.")
+	@NotNull(message = "razred mora biti unet.")
 	@Max(value = 8, message = "Razred mora biti unet kao jednocifreni broj izmedju 1 i 8.")
 	@Min(value = 1, message = "Razred mora biti unet kao jednocifreni broj izmedju 1 i 8.")
 	private Integer razred;
 	
-	//TODO probaj da dodas polja INTEGER pocetak i karaj skolske godine
-	//a da skolska godina spaja ta dva polja sa kosom crtom izmedju
-	
+	//TODO razmisli o Json Ignore
 	//@JsonIgnore
 	@Column
-	//@NotNull(message = "Pocetak skolske godine mora biti unet.")
+	@NotNull(message = "Pocetak skolske godine mora biti unet.")
+	@Max(value = 2050, message = "Pocetak skolske godine mora biti unet kao jednocifreni broj izmedju 2018 i 2050.")
+	@Min(value = 2018, message = "Pocetak skolske godine mora biti unet kao jednocifreni broj izmedju 2018 i 2050.")
 	private Integer pocetakSkolskeGodine;
 	
 	
 	@Column
-	//@NotNull(message = "Skolska godina mora biti uneta.")
 	@Pattern(regexp = "^20([0-9]{2})\\/20([0-9]{2})$", message = "Skolska godina mora biti uneta u formi \"godina/godina\". Godina mora pocinjati sa 20.")  
 	private String skolskaGodinaRazreda;
 	

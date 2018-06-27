@@ -9,6 +9,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.iktpreobuka.elektronski_dnevnik_projekat.entities.RoditeljEntity;
 import com.iktpreobuka.elektronski_dnevnik_projekat.repositories.RoditeljRepository;
+import com.iktpreobuka.elektronski_dnevnik_projekat.services.EncryptionService;
 import com.iktpreobuka.elektronski_dnevnik_projekat.util.RESTError;
 
 @RestController
@@ -28,6 +30,10 @@ public class RoditeljController {
 	@Autowired
 	private RoditeljRepository roditeljRepo;
 
+	@Autowired
+	private EncryptionService encryptionService;
+
+	@Secured("ROLE_ADMIN")
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<?> pregledSvihRoditelja() {
 
@@ -44,14 +50,14 @@ public class RoditeljController {
 
 	}
 
+	@Secured("ROLE_ADMIN")
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<?> dodajNovogRoditelja(@Valid @RequestBody RoditeljEntity roditelj, BindingResult result) {
 
 		if (result.hasErrors()) {
 			return new ResponseEntity<>(createErrorMessage(result), HttpStatus.BAD_REQUEST);
 		}
-		
-		
+
 		List<RoditeljEntity> roditelji = (List<RoditeljEntity>) roditeljRepo.findAll();
 
 		for (RoditeljEntity roditeljEntity : roditelji) {
@@ -66,14 +72,14 @@ public class RoditeljController {
 		noviRoditelj.setImeRoditelja(roditelj.getImeRoditelja());
 		noviRoditelj.setPrezimeRoditelja(roditelj.getPrezimeRoditelja());
 		noviRoditelj.setKorisnickoImeRoditelja(roditelj.getKorisnickoImeRoditelja());
-		noviRoditelj.setSifraRoditelja(roditelj.getSifraRoditelja());
+
+		noviRoditelj.setSifraRoditelja(encryptionService.enkriptor(roditelj.getSifraRoditelja()));
 		noviRoditelj.setEmailRoditelja(roditelj.getEmailRoditelja());
 
 		return new ResponseEntity<RoditeljEntity>(roditeljRepo.save(noviRoditelj), HttpStatus.OK);
 	}
 
-	
-
+	@Secured("ROLE_ADMIN")
 	@RequestMapping(value = "/izmena/{idRoditelja}", method = RequestMethod.PUT)
 	public ResponseEntity<?> izmenaRoditelja(@Valid @RequestBody RoditeljEntity noviRoditelj,
 			@PathVariable Integer idRoditelja, BindingResult result) {
@@ -98,6 +104,7 @@ public class RoditeljController {
 		return new ResponseEntity<RoditeljEntity>(roditeljRepo.save(roditelj), HttpStatus.OK);
 	}
 
+	@Secured("ROLE_ADMIN")
 	@RequestMapping(value = "/obrisi/{idRoditelja}", method = RequestMethod.DELETE)
 	public ResponseEntity<?> brisanjeRoditelja(@PathVariable Integer idRoditelja) {
 
@@ -119,6 +126,7 @@ public class RoditeljController {
 
 	}
 
+	@Secured("ROLE_ADMIN")
 	@RequestMapping(value = "/pronadjiPremaId/{idRoditelja}", method = RequestMethod.GET)
 	public ResponseEntity<?> pronadjiRoditeljaPremaId(@PathVariable Integer idRoditelja) {
 
@@ -132,7 +140,32 @@ public class RoditeljController {
 		return new ResponseEntity<RoditeljEntity>(roditelj, HttpStatus.OK);
 
 	}
-	
+
+	@Secured("ROLE_ADMIN")  //-- vraca prazan skup kad pogresi ime
+	@RequestMapping(value = "/ime/{imeRoditelja}/prezime/{prezimeRoditelja}", method = RequestMethod.GET)
+	public ResponseEntity<?> pronadjiRoditeljaPremaImenuIPrezimenu(@PathVariable String imeRoditelja, @PathVariable String prezimeRoditelja) {
+
+		
+		List<RoditeljEntity> roditelji = roditeljRepo.findByImeRoditelja(imeRoditelja);
+		
+		
+		if ((roditelji.size() == 0)) {
+
+			return new ResponseEntity<RESTError>(new RESTError("Roditelj sa prosledjenim imenom postoji."), HttpStatus.NOT_FOUND);
+		} 
+		
+
+		for (RoditeljEntity roditeljEntity : roditelji) {
+			if (!roditeljEntity.getPrezimeRoditelja().equalsIgnoreCase(prezimeRoditelja)) {
+				return new ResponseEntity<RESTError>(new RESTError("Roditelj sa prosledjenim imenom i prezimenom ne postoji."),	HttpStatus.NOT_FOUND);
+			}
+
+		}
+
+		return new ResponseEntity<Iterable<RoditeljEntity>>(roditelji, HttpStatus.OK);
+
+	}
+
 	private String createErrorMessage(BindingResult result) {
 		return result.getAllErrors().stream().map(ObjectError::getDefaultMessage).collect(Collectors.joining(" "));
 	}

@@ -9,10 +9,11 @@ import com.iktpreobuka.elektronski_dnevnik_projekat.entities.UcenikEntity;
 
 public interface UcenikRepository extends CrudRepository<UcenikEntity, Integer> {
 	
-//	@Query("select roditelj from ucenici where ")
-//	Stream<User> findAllByCustomQueryAndStream();
-	
 	
 	List<UcenikEntity> findByRoditelj (RoditeljEntity roditelj);
+	
+	List<UcenikEntity> findByImeUcenika (String imeRoditelja);
+	
+	List<UcenikEntity> findByPrezimeUcenika (String prezimeRoditelja);
 
 }

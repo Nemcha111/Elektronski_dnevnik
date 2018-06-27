@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -32,15 +33,23 @@ public class RoditeljEntity {
 	private String imeRoditelja;
 
 	@Column
+	@NotNull(message = "Prezime mora biti uneto.")
+	@Size(min = 2, max = 30, message = "Prezime mora biti izmedju {min} i {max} karaktera.")
 	private String prezimeRoditelja;
 
 	@Column
+	@NotNull(message = "Korisnicko ime mora biti uneto.")
+	@Size(min = 5, max = 20, message = "Korisnicko ime mora biti izmedju {min} i {max} karaktera.")
 	private String korisnickoImeRoditelja;
 
 	@Column
+	@NotNull(message = "Sifra mora biti uneta.")
+	//@Size(min = 5, max = 50, message = "Sifra mora biti izmedju {min} i {max} karaktera.")
 	private String sifraRoditelja;
 
 	@Column
+	@NotNull(message = "Email mora biti unet.")
+	@Pattern(regexp = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$") 
 	private String emailRoditelja;
 
 	@Column

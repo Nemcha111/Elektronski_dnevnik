@@ -8,6 +8,6 @@ import com.iktpreobuka.elektronski_dnevnik_projekat.entities.RazredEntity;
 
 public interface RazredRepository extends CrudRepository<RazredEntity, Integer> {
 
-	List<RazredEntity>findBySkolskaGodinaRazreda(String razred);
+	List<RazredEntity>findBySkolskaGodinaRazreda(String skolskaGodinaRazreda);
 	
 }

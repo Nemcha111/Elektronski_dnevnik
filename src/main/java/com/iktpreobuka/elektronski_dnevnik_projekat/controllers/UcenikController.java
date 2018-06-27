@@ -9,6 +9,8 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,6 +40,7 @@ public class UcenikController {
 	@Autowired
 	private OdeljenjeRepository odeljenjeRepo;
 
+	@Secured("ROLE_ADMIN") 
 	@RequestMapping(value = "roditelj/{idRoditelja}/odeljenje/{idOdeljenja}", method = RequestMethod.POST)
 	public ResponseEntity<?> dodajNovogUcenika(@Valid @RequestBody UcenikEntity ucenik,
 			@PathVariable Integer idRoditelja, @PathVariable Integer idOdeljenja, BindingResult result) {
@@ -89,6 +92,7 @@ public class UcenikController {
 		return result.getAllErrors().stream().map(ObjectError::getDefaultMessage).collect(Collectors.joining(" "));
 	}
 
+	@Secured("ROLE_ADMIN")
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<?> pregledSvihUcenika() {
 
@@ -104,6 +108,8 @@ public class UcenikController {
 
 	}
 	
+	
+	@Secured("ROLE_ADMIN") 
 	@RequestMapping(value = "/pronadjiPremaId/{idUcenika}", method = RequestMethod.GET)
 	public ResponseEntity<?> pronadjiUcenikaPoId(@PathVariable Integer idUcenika) {
 
@@ -118,6 +124,7 @@ public class UcenikController {
 
 	}
 	
+	@Secured("ROLE_ADMIN") 
 	@RequestMapping(value = "/obrisi/{idUcenika}", method = RequestMethod.DELETE)
 	public ResponseEntity<?> brisanjeUcenika(@PathVariable Integer idUcenika) {
 
@@ -139,6 +146,7 @@ public class UcenikController {
 
 	}
 	
+	@Secured("ROLE_ADMIN") 
 	@RequestMapping(value = "/izmena/{idUcenika}", method = RequestMethod.PUT)
 	public ResponseEntity<?> izmenaUcenika(@Valid @RequestBody UcenikEntity noviUcenik,
 			@PathVariable Integer idUcenika, BindingResult result) {
@@ -164,7 +172,7 @@ public class UcenikController {
 		return new ResponseEntity<UcenikEntity>(ucenikRepo.save(ucenik), HttpStatus.OK);
 	}
 	
-	
+	@Secured("ROLE_ADMIN") 
 	@RequestMapping(value = "/izmena/{idUcenika}/roditelj/{idRoditelja}", method = RequestMethod.PUT)
 	public ResponseEntity<?> izmenaRoditeljaUceniku(@PathVariable Integer idUcenika,
 			@PathVariable Integer idRoditelja) {
@@ -193,6 +201,7 @@ public class UcenikController {
 	}
 	
 	
+	@Secured("ROLE_ADMIN") 
 	@RequestMapping(value = "/izmena/{idUcenika}/odeljenje/{idOdeljenja}", method = RequestMethod.PUT)
 	public ResponseEntity<?> izmenaOdeljenjaUceniku(@PathVariable Integer idUcenika,
 			@PathVariable Integer idOdeljenja) {
@@ -222,19 +231,22 @@ public class UcenikController {
 	
 	
 	
-	
-	@RequestMapping(value = "/pronadjiPremaRoditelju/{idRoditelja}", method = RequestMethod.GET)
-	public ResponseEntity<?> pronadjiUcenikaPoRoditelju(@PathVariable Integer idRoditelja) {
 
-		if (roditeljRepo.findById(idRoditelja).isPresent() == false) {
+	//@Secured({"ROLE_RODITELJ","ROLE_ADMIN"}) 
+	@RequestMapping(value = "/pronadjiPremaRoditelju/{korisnickoImeRoditelja}", method = RequestMethod.GET)
+	@PostAuthorize("#username == authentication.principal.username")
+	public ResponseEntity<?> pronadjiUcenikaPoRoditelju(@PathVariable String korisnickoImeRoditelja, String username) {
+
+		if (roditeljRepo.findByKorisnickoImeRoditelja(korisnickoImeRoditelja) == null) {
+			
 
 			return new ResponseEntity<RESTError>(new RESTError("Roditelj sa prosledjenim ID brojem ne postoji."),
 					HttpStatus.NOT_FOUND);
 		}
 
-		RoditeljEntity roditelj = roditeljRepo.findById(idRoditelja).get();
+		//UserName ovog korisnika treba da bude isti kao UserName onoga ko je poslao zahtev
+		RoditeljEntity roditelj = roditeljRepo.findByKorisnickoImeRoditelja(korisnickoImeRoditelja);
 		
-		List<UcenikEntity> ucenici = (List<UcenikEntity>) ucenikRepo.findByRoditelj(roditelj);
 		
 		if (roditelj.getDeca().size() == 0) {
 			return new ResponseEntity<RESTError>(
@@ -242,9 +254,42 @@ public class UcenikController {
 					HttpStatus.NOT_FOUND);
 		}
 		
+		List<UcenikEntity> ucenici = (List<UcenikEntity>) ucenikRepo.findByRoditelj(roditelj);
+		
 		
 		return new ResponseEntity<Iterable<UcenikEntity>>(ucenici, HttpStatus.OK);
 
 	}
 
+	@Secured("ROLE_ADMIN")
+	@RequestMapping(value = "/ime/{imeUcenika}/prezime/{prezimeUcenika}", method = RequestMethod.GET)
+	public ResponseEntity<?> pronadjiUcenikaPremaImenuIPrezimenu(@PathVariable String imeUcenika,
+			@PathVariable String prezimeUcenika) {
+
+		List<UcenikEntity> ucenici = ucenikRepo.findByImeUcenika(imeUcenika);
+		
+		
+		if ((ucenici.size() == 0)) {
+
+			return new ResponseEntity<RESTError>(new RESTError("Ucenik sa prosledjenim imenom ne postoji."),
+					HttpStatus.NOT_FOUND);
+		} 
+//		if ((nastavnikRepo.findByPrezimeNastavnika(prezimeNastavnika)) == null) {
+//			return new ResponseEntity<RESTError>(new RESTError("Nastavnik sa prosledjenim prezimenom ne postoji."),
+//					HttpStatus.NOT_FOUND);
+//
+//		}
+
+		for (UcenikEntity ucenikEntity : ucenici) {
+			if (!ucenikEntity.getPrezimeUcenika().equalsIgnoreCase(prezimeUcenika))
+				 {
+			return new ResponseEntity<RESTError>(
+					new RESTError("Ucenik sa prosledjenim imenom i prezimenom ne postoji."), HttpStatus.NOT_FOUND);
+		}
+			
+		}
+
+		return new ResponseEntity<Iterable<UcenikEntity>>(ucenici, HttpStatus.OK);
+
+	}
 }

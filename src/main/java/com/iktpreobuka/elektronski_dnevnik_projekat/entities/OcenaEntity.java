@@ -11,6 +11,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.iktpreobuka.elektronski_dnevnik_projekat.enumerations.ETipOcene;
@@ -25,6 +28,9 @@ public class OcenaEntity {
 	
 	
 	@Column
+	@NotNull(message = "Ocena mora biti uneta.")
+	@Max(value = 5, message = "Ocena mora biti unet kao jednocifreni broj izmedju 1 i 5.")
+	@Min(value = 0, message = "Ocena mora biti unet kao jednocifreni broj izmedju 1 i 5.")
 	private Integer ocena;
 	
 	@Column
@@ -32,7 +38,6 @@ public class OcenaEntity {
 	
 	@Column
 	private ETipOcene tipOcene;
-	
 	
 	@Column
 	private String predmet;

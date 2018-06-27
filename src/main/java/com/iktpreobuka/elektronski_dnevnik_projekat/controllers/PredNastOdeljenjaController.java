@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -37,7 +38,9 @@ public class PredNastOdeljenjaController {
 
 	@Autowired
 	public OdeljenjeRepository odeljenjeRepo;
+	
 
+	@Secured("ROLE_ADMIN") 
 	@RequestMapping(path = "/predmet/{idPredmeta}/nastavnik/{idNastavnika}/odeljenje/{idOdeljenja}", method = RequestMethod.POST)
 	public ResponseEntity<?> dodajNovogPredNastOdeljenja(@PathVariable Integer idPredmeta,
 			@PathVariable Integer idNastavnika, @PathVariable Integer idOdeljenja) {
@@ -70,6 +73,7 @@ public class PredNastOdeljenjaController {
 				HttpStatus.OK);
 	}
 
+	@Secured("ROLE_ADMIN") 
 	@RequestMapping(value = "/obrisi/{idPredNastOdeljenja}", method = RequestMethod.DELETE)
 	public ResponseEntity<?> obrisiPredNastOdeljenja(@PathVariable Integer idPredNastOdeljenja) {
 
@@ -92,6 +96,8 @@ public class PredNastOdeljenjaController {
 
 	}
 
+	
+	@Secured("ROLE_ADMIN") 
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<?> pregledSvihPredNastOdeljenja() {
 
@@ -108,6 +114,7 @@ public class PredNastOdeljenjaController {
 
 	}
 
+	@Secured("ROLE_ADMIN") 
 	@RequestMapping(value = "/pronadjiPremaId/{idPredNastOdeljenja}", method = RequestMethod.GET)
 	public ResponseEntity<?> pronadjiNastPredOdeljenjaPremaId(@PathVariable Integer idPredNastOdeljenja) {
 
@@ -123,6 +130,8 @@ public class PredNastOdeljenjaController {
 
 	}
 
+	
+	@Secured("ROLE_ADMIN") 
 	@RequestMapping(value = "/izmena/{idPredNastOdeljenja}/predmet/{idPredmeta}", method = RequestMethod.PUT)
 	public ResponseEntity<?> izmenaPredmetaPredNastOdeljenja(@PathVariable Integer idPredNastOdeljenja,
 			@PathVariable Integer idPredmeta) {
@@ -149,6 +158,7 @@ public class PredNastOdeljenjaController {
 
 	}
 
+	@Secured("ROLE_ADMIN") 
 	@RequestMapping(value = "/izmena/{idPredNastOdeljenja}/nastavnik/{idNastavnika}", method = RequestMethod.PUT)
 	public ResponseEntity<?> izmenaNastavnikaPredNastOdeljenja(@PathVariable Integer idPredNastOdeljenja,
 			@PathVariable Integer idNastavnika) {
@@ -175,6 +185,7 @@ public class PredNastOdeljenjaController {
 
 	}
 
+	@Secured("ROLE_ADMIN") 
 	@RequestMapping(value = "/izmena/{idPredNastOdeljenja}/odeljenje/{idOdeljenja}", method = RequestMethod.PUT)
 	public ResponseEntity<?> izmenaOdeljenjaPredNastOdeljenja(@PathVariable Integer idPredNastOdeljenja,
 			@PathVariable Integer idOdeljenja) {

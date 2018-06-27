@@ -87,7 +87,7 @@ public class OcenaServiceImpl implements OcenaService {
 				zakljucnaOcenaPolugodiste.setOcenaUcenika(ucenikEntity);
 				zakljucnaOcenaPolugodiste.setSkolskaGodinaOcene(skolskaGodinaOcene);
 
-				ocenaRepo.save(zakljucnaOcenaPolugodiste);
+				ocenaRepo.save(zakljucnaOcenaPolugodiste); //ovde je pukao
 
 				sveZakljucneOcenePolugodista.add(zakljucnaOcenaPolugodiste);
 
