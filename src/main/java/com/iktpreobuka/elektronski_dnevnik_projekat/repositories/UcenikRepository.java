@@ -15,5 +15,7 @@ public interface UcenikRepository extends CrudRepository<UcenikEntity, Integer> 
 	List<UcenikEntity> findByImeUcenika (String imeRoditelja);
 	
 	List<UcenikEntity> findByPrezimeUcenika (String prezimeRoditelja);
+	
+	UcenikEntity findByKorisnickoImeUcenika (String korisnickoImeUcenika);
 
 }

@@ -8,8 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -51,13 +49,11 @@ public class NastavnikEntity {
 	
 	@Column
 	@NotNull(message = "Sifra mora biti uneta.")
-	@Size(min = 5, max = 20, message = "Sifra mora biti izmedju {min} i {max} karaktera.")
+	//@Size(min = 5, max = 20, message = "Sifra mora biti izmedju {min} i {max} karaktera.")
 	private String sifraNastavnika;
 	
 	@Column (name = "uloga_nastavnika")
 	private ETipKorisnika korisnikNastavnik = ETipKorisnika.ROLE_NASTAVNIK;
-	
-	
 	
 	
 	@JsonIgnore

@@ -5,6 +5,8 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +24,7 @@ import com.iktpreobuka.elektronski_dnevnik_projekat.entities.AdminEntity;
 
 import com.iktpreobuka.elektronski_dnevnik_projekat.repositories.AdminRepository;
 import com.iktpreobuka.elektronski_dnevnik_projekat.repositories.UcenikRepository;
-
+import com.iktpreobuka.elektronski_dnevnik_projekat.services.EncryptionService;
 import com.iktpreobuka.elektronski_dnevnik_projekat.util.RESTError;
 
 @RestController
@@ -34,8 +36,13 @@ public class AdminController {
 
 	@Autowired
 	public UcenikRepository ucenikRepo;
+	
+	@Autowired
+	private EncryptionService encryptionService;
+	
+	private final Logger logger = (Logger) LoggerFactory.getLogger(this.getClass());
 
-	@Secured("ROLE_ADMIN") 
+	//@Secured("ROLE_ADMIN") 
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<?> dodajNovogAdmina(@Valid @RequestBody AdminEntity admin, BindingResult result) {
 
@@ -56,11 +63,12 @@ public class AdminController {
 
 		noviAdmin.setKorisnickoImeAdmina(admin.getKorisnickoImeAdmina());
 		noviAdmin.setSifraAdmina(admin.getSifraAdmina());
+		//noviAdmin.setSifraAdmina(encryptionService.enkriptor(admin.getSifraAdmina()));
 
 		return new ResponseEntity<AdminEntity>(adminRepo.save(noviAdmin), HttpStatus.OK);
 	}
 
-	@Secured("ROLE_ADMIN") 
+	//@Secured("ROLE_ADMIN") 
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<?> prikaziSveAdmine() {
 

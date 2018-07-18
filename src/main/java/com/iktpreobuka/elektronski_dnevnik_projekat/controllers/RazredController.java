@@ -96,27 +96,7 @@ public class RazredController {
 			return new ResponseEntity<>(createErrorMessage(result), HttpStatus.BAD_REQUEST);
 		}
 
-		// return razredService.proveraIKreiranjePojedniacnogRazreda(razred);
-		List<RazredEntity> razredi = (List<RazredEntity>) razredRepo.findAll();
-
-		for (RazredEntity razredEntity : razredi) {
-
-			if (razredEntity.getRazred().equals(razred.getRazred())) {
-				if (razredEntity.getSkolskaGodinaRazreda().equals(razred.getSkolskaGodinaRazreda()))
-
-					return new ResponseEntity<RESTError>(
-							new RESTError("Razred koji pokusavate da kreirte vec postoji."), HttpStatus.BAD_REQUEST);
-			}
-
-		}
-
-		RazredEntity noviRazred = new RazredEntity();
-		noviRazred.setRazred(razred.getRazred());
-		noviRazred.setSkolskaGodinaRazreda(razred.getSkolskaGodinaRazreda());
-
-		razredRepo.save(noviRazred);
-
-		return new ResponseEntity<RazredEntity>(razredRepo.save(noviRazred), HttpStatus.OK);
+		 return razredService.proveraIKreiranjePojedniacnogRazreda(razred);
 
 	}
 	

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,6 +35,11 @@ import com.iktpreobuka.elektronski_dnevnik_projekat.repositories.UcenikRepositor
 import com.iktpreobuka.elektronski_dnevnik_projekat.services.EmailService;
 import com.iktpreobuka.elektronski_dnevnik_projekat.services.OcenaService;
 import com.iktpreobuka.elektronski_dnevnik_projekat.util.RESTError;
+
+//logger.debug("This is a debug message");
+//logger.info("This is an info message");
+//logger.warn("This is a warn message");
+//logger.error("This is an error message");
 
 @RestController
 @RequestMapping(path = "/API/version1/ocena")
@@ -59,9 +65,7 @@ public class OcenaController {
 
 	private final Logger logger = (Logger) LoggerFactory.getLogger(this.getClass());
 
-	
-	
-	@Secured("ROLE_NASTAVNIK") 
+	@Secured("ROLE_NASTAVNIK")
 	@RequestMapping(value = "/ucenik/{idUcenika}/pred-nast-odeljenja/{idPredNastOdeljenja}", method = RequestMethod.POST)
 	public ResponseEntity<?> kreirajeOcene(@Valid @RequestBody OcenaEntity ocena, @PathVariable Integer idUcenika,
 			@PathVariable Integer idPredNastOdeljenja, BindingResult result) throws Exception {
@@ -105,20 +109,17 @@ public class OcenaController {
 
 		OcenaEntity ocenaEntity = ocenaRepo.save(novaOcena);
 
-		emailService.sendTemplateMessage(ocenaEntity);
+		if (novaOcena.getOcenaUcenika().getRoditelj().getEmailRoditelja().equals("nemanja90tem@yahoo.com")) {
+			emailService.sendTemplateMessage(ocenaEntity);
+		}
+
 		return new ResponseEntity<OcenaEntity>(ocenaEntity, HttpStatus.OK);
 
 	}
 
-	
 	@Secured("ROLE_ADMIN")
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<?> pregledSvihOcena() {
-
-		logger.debug("This is a debug message");
-		logger.info("This is an info message");
-		logger.warn("This is a warn message");
-		logger.error("This is an error message");
 
 		List<OcenaEntity> ocene = new ArrayList<>();
 
@@ -132,7 +133,68 @@ public class OcenaController {
 		return new ResponseEntity<Iterable<OcenaEntity>>(ocenaRepo.findAll(), HttpStatus.OK);
 	}
 
+	@Secured({ "ROLE_ADMIN", "ROLE_NASTAVNIK", "ROLE_RODITELJ" })
+	@RequestMapping(value = "/prikaz-ocena-ucenika/{idUcenika}", method = RequestMethod.GET)
+	public ResponseEntity<?> pregledSvihOcenaUcenika(@PathVariable Integer idUcenika) {
+
+		if (ucenikRepo.findById(idUcenika).isPresent() == false) {
+
+			return new ResponseEntity<RESTError>(new RESTError("Ucenik sa prosledjenim ID brojem ne postoji."),
+					HttpStatus.NOT_FOUND);
+		}
+
+		List<OcenaEntity> ocene = (List<OcenaEntity>) ocenaRepo.findAll();
+
+		List<OcenaEntity> oceneUcenika = new ArrayList<>();
+
+		for (OcenaEntity ocenaEntity : ocene) {
+			if (ocenaEntity.getIdUcenika() == idUcenika) {
+				oceneUcenika.add(ocenaEntity);
+
+			}
+		}
+
+		if (oceneUcenika.size() == 0) {
+			return new ResponseEntity<RESTError>(new RESTError("Za trazenog ucenika nije pronadjena ni jedana ocena."),
+					HttpStatus.NOT_FOUND);
+		}
+
+		return new ResponseEntity<Iterable<OcenaEntity>>(oceneUcenika, HttpStatus.OK);
+	}
 	
+	
+	@RequestMapping(value = "/ucenik-prikaz-ocena/{username}", method = RequestMethod.GET)
+	@PreAuthorize("#username == authentication.principal.username")
+	public ResponseEntity<?> UcenikpregledSvihOcena(@PathVariable String username) {
+		
+		 UcenikEntity ucenik = ucenikRepo.findByKorisnickoImeUcenika(username);
+		 
+
+		if (ucenikRepo.findById(ucenik.getIdUcenika()).isPresent() == false) {
+
+			return new ResponseEntity<RESTError>(new RESTError("Ucenik sa prosledjenim korisnickim imenom ne postoji."),
+					HttpStatus.NOT_FOUND);
+		}
+
+		List<OcenaEntity> ocene = (List<OcenaEntity>) ocenaRepo.findAll();
+
+		List<OcenaEntity> oceneUcenika = new ArrayList<>();
+
+		for (OcenaEntity ocenaEntity : ocene) {
+			if (ocenaEntity.getIdUcenika() == ucenik.getIdUcenika()) {
+				oceneUcenika.add(ocenaEntity);
+
+			}
+		}
+
+		if (oceneUcenika.size() == 0) {
+			return new ResponseEntity<RESTError>(new RESTError("Za trazenog ucenika nije pronadjena ni jedana ocena."),
+					HttpStatus.NOT_FOUND);
+		}
+
+		return new ResponseEntity<Iterable<OcenaEntity>>(oceneUcenika, HttpStatus.OK);
+	}
+
 	@Secured("ROLE_ADMIN")
 	@RequestMapping(value = "/obrisi/{idOcene}", method = RequestMethod.DELETE)
 	public ResponseEntity<?> brisanjeOcene(@PathVariable Integer idOcene) {
@@ -149,7 +211,6 @@ public class OcenaController {
 
 	}
 
-	
 	@Secured("ROLE_ADMIN")
 	@RequestMapping(value = "/izmeni/idOcene/{idOcene}", method = RequestMethod.PUT)
 	private ResponseEntity<?> izmenaOcene(@Valid @RequestBody OcenaEntity novaOcena, @PathVariable Integer idOcene,
@@ -175,7 +236,6 @@ public class OcenaController {
 
 	}
 
-	
 	@Secured("ROLE_ADMIN")
 	@RequestMapping(value = "/zakljucivanje-ocena-polugodiste", method = RequestMethod.POST)
 	public ResponseEntity<?> zakljucivanjeOcenaPolugodista(@RequestParam String skolskaGodina) {
@@ -194,7 +254,6 @@ public class OcenaController {
 				HttpStatus.BAD_REQUEST);
 	}
 
-	
 	@Secured("ROLE_ADMIN")
 	@RequestMapping(value = "/zakljucivanje-ocena-zavrsnih", method = RequestMethod.POST)
 	public ResponseEntity<?> zakljucivanjeOcenaZavrsnih(@RequestParam String skolskaGodina) {
@@ -215,7 +274,6 @@ public class OcenaController {
 
 	}
 
-	
 	@Secured("ROLE_ADMIN")
 	@RequestMapping(value = "/brisanje-zakljucnih-ocena-polugodista", method = RequestMethod.DELETE)
 	public ResponseEntity<?> brisanjeOcenaPolugodista(@RequestParam String skolskaGodina) {
@@ -234,8 +292,8 @@ public class OcenaController {
 
 		if (ocenePolugodista.size() <= 0) {
 
-			return new ResponseEntity<RESTError>(
-					new RESTError("Ne postoji ni jedna zakljucna ocena polugodista za unetu skolsku godinu. Proverite da li ste ispravno uneli skolsku godinu"),
+			return new ResponseEntity<RESTError>(new RESTError(
+					"Ne postoji ni jedna zakljucna ocena polugodista za unetu skolsku godinu. Proverite da li ste ispravno uneli skolsku godinu"),
 					HttpStatus.BAD_REQUEST);
 		}
 
@@ -245,9 +303,7 @@ public class OcenaController {
 		}
 		return new ResponseEntity<Iterable<OcenaEntity>>(ocenePolugodista, HttpStatus.OK);
 	}
-	
-	
-	
+
 	@Secured("ROLE_ADMIN")
 	@RequestMapping(value = "/brisanje-zakljucnih-ocena", method = RequestMethod.DELETE)
 	public ResponseEntity<?> brisanjeOcenaZavrsnih(@RequestParam String skolskaGodina) {
@@ -266,8 +322,8 @@ public class OcenaController {
 
 		if (oceneZakljucne.size() <= 0) {
 
-			return new ResponseEntity<RESTError>(
-					new RESTError("Ne postoji ni jedna zakljucna ocena polugodista za unetu skolsku godinu. Proverite da li ste ispravno uneli skolsku godinu."),
+			return new ResponseEntity<RESTError>(new RESTError(
+					"Ne postoji ni jedna zakljucna ocena polugodista za unetu skolsku godinu. Proverite da li ste ispravno uneli skolsku godinu."),
 					HttpStatus.BAD_REQUEST);
 		}
 
@@ -277,20 +333,16 @@ public class OcenaController {
 		}
 		return new ResponseEntity<Iterable<OcenaEntity>>(oceneZakljucne, HttpStatus.OK);
 	}
-	
-	
-	
+
 	@Secured("ROLE_ADMIN")
 	@RequestMapping(value = "/prikaz-zakljucnih-ocena-polugodista", method = RequestMethod.GET)
 	public ResponseEntity<?> pregledSvihOcenaPolugodista(@RequestParam String skolskaGodinaOcene) {
 
-		
 		logger.info("Pregled svih zakljucnih ocena polugodista");
-		
 
-		List<OcenaEntity> sveOceneSkolskeGodine = (List<OcenaEntity>) ocenaRepo.findBySkolskaGodinaOcene(skolskaGodinaOcene);
-		
-		
+		List<OcenaEntity> sveOceneSkolskeGodine = (List<OcenaEntity>) ocenaRepo
+				.findBySkolskaGodinaOcene(skolskaGodinaOcene);
+
 		List<OcenaEntity> ocenePolugodista = new ArrayList<>();
 
 		for (OcenaEntity ocena : sveOceneSkolskeGodine) {
@@ -302,26 +354,23 @@ public class OcenaController {
 		}
 
 		if (ocenePolugodista.size() == 0) {
-			return new ResponseEntity<RESTError>(new RESTError("Ne postoji ni jedna zakljucna ocena polugodista za unetu skolsku godinu. Proverite da li ste ispravno uneli skolsku godinu."),
+			return new ResponseEntity<RESTError>(new RESTError(
+					"Ne postoji ni jedna zakljucna ocena polugodista za unetu skolsku godinu. Proverite da li ste ispravno uneli skolsku godinu."),
 					HttpStatus.NOT_FOUND);
 		}
 
 		return new ResponseEntity<Iterable<OcenaEntity>>(ocenePolugodista, HttpStatus.OK);
 	}
-	
-	
-	
+
 	@Secured("ROLE_ADMIN")
 	@RequestMapping(value = "/prikaz-zakljucnih-ocena-zavrsnih", method = RequestMethod.GET)
 	public ResponseEntity<?> pregledSvihOcenaZavrsnih(@RequestParam String skolskaGodinaOcene) {
 
-		
 		logger.info("Pregled svih zakljucnih ocena");
-		
 
-		List<OcenaEntity> sveOceneSkolskeGodine = (List<OcenaEntity>) ocenaRepo.findBySkolskaGodinaOcene(skolskaGodinaOcene);
-		
-		
+		List<OcenaEntity> sveOceneSkolskeGodine = (List<OcenaEntity>) ocenaRepo
+				.findBySkolskaGodinaOcene(skolskaGodinaOcene);
+
 		List<OcenaEntity> ocenePolugodista = new ArrayList<>();
 
 		for (OcenaEntity ocena : sveOceneSkolskeGodine) {
@@ -333,18 +382,15 @@ public class OcenaController {
 		}
 
 		if (ocenePolugodista.size() == 0) {
-			return new ResponseEntity<RESTError>(new RESTError("Ne postoji ni jedna zakljucna ocena polugodista za unetu skolsku godinu. Proverite da li ste ispravno uneli skolsku godinu."),
+			return new ResponseEntity<RESTError>(new RESTError(
+					"Ne postoji ni jedna zakljucna ocena polugodista za unetu skolsku godinu. Proverite da li ste ispravno uneli skolsku godinu."),
 					HttpStatus.NOT_FOUND);
 		}
 
 		return new ResponseEntity<Iterable<OcenaEntity>>(ocenePolugodista, HttpStatus.OK);
 	}
-	
-	//TODO napraviti pregled ocena ucenika
-	
-	
-	
-	
+
+	// TODO napraviti pregled ocena ucenika
 
 	private String createErrorMessage(BindingResult result) {
 		return result.getAllErrors().stream().map(ObjectError::getDefaultMessage).collect(Collectors.joining(" "));

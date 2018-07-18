@@ -30,13 +30,12 @@ public class RazredEntity {
 	private Integer idRazreda;
 	
 	@Column
-	@NotNull(message = "razred mora biti unet.")
+	//@NotNull(message = "razred mora biti unet.")
 	@Max(value = 8, message = "Razred mora biti unet kao jednocifreni broj izmedju 1 i 8.")
 	@Min(value = 1, message = "Razred mora biti unet kao jednocifreni broj izmedju 1 i 8.")
 	private Integer razred;
 	
-	//TODO razmisli o Json Ignore
-	//@JsonIgnore
+	
 	@Column
 	@NotNull(message = "Pocetak skolske godine mora biti unet.")
 	@Max(value = 2050, message = "Pocetak skolske godine mora biti unet kao jednocifreni broj izmedju 2018 i 2050.")

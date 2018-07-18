@@ -46,7 +46,7 @@ public class NastavnikController {
 
 	}
 
-	@Secured("ROLE_ADMIN")
+	//@Secured("ROLE_ADMIN")
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<?> dodajNovogNastavnika(@Valid @RequestBody NastavnikEntity nastavnik, BindingResult result) {
 
@@ -140,26 +140,20 @@ public class NastavnikController {
 			@PathVariable String prezimeNastavnika) {
 
 		List<NastavnikEntity> nastavnici = nastavnikRepo.findByImeNastavnika(imeNastavnika);
-		
-		
+
 		if ((nastavnici.size() == 0)) {
 
 			return new ResponseEntity<RESTError>(new RESTError("Nastavnik sa prosledjenim imenom ne postoji."),
 					HttpStatus.NOT_FOUND);
-		} 
-//		if ((nastavnikRepo.findByPrezimeNastavnika(prezimeNastavnika)) == null) {
-//			return new ResponseEntity<RESTError>(new RESTError("Nastavnik sa prosledjenim prezimenom ne postoji."),
-//					HttpStatus.NOT_FOUND);
-//
-//		}
+		}
 
 		for (NastavnikEntity nastavnikEntity : nastavnici) {
-			if (!nastavnikEntity.getPrezimeNastavnika().equalsIgnoreCase(prezimeNastavnika))
-				 {
-			return new ResponseEntity<RESTError>(
-					new RESTError("Nastavnik sa prosledjenim imenom i prezimenom ne postoji."), HttpStatus.NOT_FOUND);
-		}
-			
+			if (!nastavnikEntity.getPrezimeNastavnika().equalsIgnoreCase(prezimeNastavnika)) {
+				return new ResponseEntity<RESTError>(
+						new RESTError("Nastavnik sa prosledjenim imenom i prezimenom ne postoji."),
+						HttpStatus.NOT_FOUND);
+			}
+
 		}
 
 		return new ResponseEntity<Iterable<NastavnikEntity>>(nastavnici, HttpStatus.OK);

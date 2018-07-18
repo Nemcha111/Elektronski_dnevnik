@@ -45,7 +45,7 @@ public class UcenikEntity {
 
 	@Column
 	@NotNull(message = "Sifra ucenika mora biti uneto.")
-	@Size(min = 5, max = 20, message = "Sifra mora biti izmedju {min} i {max} karaktera.")
+	//@Size(min = 5, max = 20, message = "Sifra mora biti izmedju {min} i {max} karaktera.")
 	private String sifraUcenika;
 
 	@Column

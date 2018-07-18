@@ -12,5 +12,7 @@ public interface NastavnikRepository extends CrudRepository<NastavnikEntity, Int
 	List<NastavnikEntity> findByImeNastavnika (String imeNastavnika);
 	
 	List<NastavnikEntity> findByPrezimeNastavnika (String prezimeNastavnika);
+	
+	NastavnikEntity findByKorisnickoImeNastavnika (String korisnickoImeNastavnika);
 
 }

@@ -6,10 +6,14 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,6 +36,10 @@ public class RoditeljController {
 
 	@Autowired
 	private EncryptionService encryptionService;
+	
+	private final Logger logger = (Logger) LoggerFactory.getLogger(this.getClass());
+	
+	
 
 	@Secured("ROLE_ADMIN")
 	@RequestMapping(method = RequestMethod.GET)
@@ -46,6 +54,11 @@ public class RoditeljController {
 					HttpStatus.NOT_FOUND);
 		}
 
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String currentPrincipalName = authentication.getName();
+
+		logger.info("Korisnik " + currentPrincipalName + " je pozvao prikazivanje svih roditelja.");
+		
 		return new ResponseEntity<Iterable<RoditeljEntity>>(roditeljRepo.findAll(), HttpStatus.OK);
 
 	}
@@ -76,6 +89,12 @@ public class RoditeljController {
 		noviRoditelj.setSifraRoditelja(encryptionService.enkriptor(roditelj.getSifraRoditelja()));
 		noviRoditelj.setEmailRoditelja(roditelj.getEmailRoditelja());
 
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String currentPrincipalName = authentication.getName();
+
+		logger.info("Korisnik " + currentPrincipalName + " je kreirao novog roditelja sa korisnickim imenom "
+				+ noviRoditelj.getKorisnickoImeRoditelja());
+		
 		return new ResponseEntity<RoditeljEntity>(roditeljRepo.save(noviRoditelj), HttpStatus.OK);
 	}
 
@@ -100,6 +119,12 @@ public class RoditeljController {
 		roditelj.setPrezimeRoditelja(noviRoditelj.getPrezimeRoditelja());
 		roditelj.setKorisnickoImeRoditelja(noviRoditelj.getKorisnickoImeRoditelja());
 		roditelj.setEmailRoditelja(noviRoditelj.getEmailRoditelja());
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String currentPrincipalName = authentication.getName();
+
+		logger.info("Korisnik " + currentPrincipalName + " je izmenio roditelja sa korisnickim imenom "
+				+ noviRoditelj.getKorisnickoImeRoditelja());
 
 		return new ResponseEntity<RoditeljEntity>(roditeljRepo.save(roditelj), HttpStatus.OK);
 	}
@@ -122,6 +147,13 @@ public class RoditeljController {
 		}
 
 		roditeljRepo.deleteById(idRoditelja);
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String currentPrincipalName = authentication.getName();
+
+		logger.warn("Korisnik " + currentPrincipalName + " je obrisao roditelja sa korisnickim imenom "
+				+ roditelj.getKorisnickoImeRoditelja());
+		
 		return new ResponseEntity<RoditeljEntity>(roditelj, HttpStatus.OK);
 
 	}
@@ -137,11 +169,18 @@ public class RoditeljController {
 		}
 
 		RoditeljEntity roditelj = roditeljRepo.findById(idRoditelja).get();
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String currentPrincipalName = authentication.getName();
+
+		logger.info("Korisnik " + currentPrincipalName + " je pozvao prikazivanje roditelja po ID sa korisnickim imenom "
+				+ roditelj.getKorisnickoImeRoditelja());
+		
 		return new ResponseEntity<RoditeljEntity>(roditelj, HttpStatus.OK);
 
 	}
 
-	@Secured("ROLE_ADMIN")  //-- vraca prazan skup kad pogresi ime
+	@Secured("ROLE_ADMIN")
 	@RequestMapping(value = "/ime/{imeRoditelja}/prezime/{prezimeRoditelja}", method = RequestMethod.GET)
 	public ResponseEntity<?> pronadjiRoditeljaPremaImenuIPrezimenu(@PathVariable String imeRoditelja, @PathVariable String prezimeRoditelja) {
 
@@ -161,6 +200,11 @@ public class RoditeljController {
 			}
 
 		}
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String currentPrincipalName = authentication.getName();
+
+		logger.info("Korisnik " + currentPrincipalName + " je pozvao prikazivanje roditelja sa imenom" + imeRoditelja +" i prezimenom " + prezimeRoditelja);
 
 		return new ResponseEntity<Iterable<RoditeljEntity>>(roditelji, HttpStatus.OK);
 

@@ -56,18 +56,21 @@ public class RazredServiceImpl implements RazredService {
 
 		for (RazredEntity razredEntity : razredi) {
 
-			if (razredEntity.getRazred().equals(razred.getRazred())) {
-				if (razredEntity.getSkolskaGodinaRazreda().equals(razred.getSkolskaGodinaRazreda()))
+			if (razredEntity.getRazred() == razred.getRazred()) {
+				if (String.valueOf(razredEntity.getPocetakSkolskeGodine()).equals(String.valueOf(razred.getPocetakSkolskeGodine())) )  {
 
 					return new ResponseEntity<RESTError>(
 							new RESTError("Razred koji pokusavate da kreirte vec postoji."), HttpStatus.BAD_REQUEST);
+				}
 			}
 
 		}
 
 		RazredEntity noviRazred = new RazredEntity();
 		noviRazred.setRazred(razred.getRazred());
-		noviRazred.setSkolskaGodinaRazreda(razred.getSkolskaGodinaRazreda());
+		noviRazred.setPocetakSkolskeGodine(razred.getPocetakSkolskeGodine());
+		noviRazred.setSkolskaGodinaRazreda(String.valueOf(razred.getPocetakSkolskeGodine()) + "/"
+				+ String.valueOf(razred.getPocetakSkolskeGodine() + 1));
 
 		razredRepo.save(noviRazred);
 
