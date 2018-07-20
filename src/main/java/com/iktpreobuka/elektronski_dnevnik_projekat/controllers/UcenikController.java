@@ -29,6 +29,7 @@ import com.iktpreobuka.elektronski_dnevnik_projekat.entities.UcenikEntity;
 import com.iktpreobuka.elektronski_dnevnik_projekat.repositories.OdeljenjeRepository;
 import com.iktpreobuka.elektronski_dnevnik_projekat.repositories.RoditeljRepository;
 import com.iktpreobuka.elektronski_dnevnik_projekat.repositories.UcenikRepository;
+import com.iktpreobuka.elektronski_dnevnik_projekat.services.EncryptionService;
 import com.iktpreobuka.elektronski_dnevnik_projekat.util.RESTError;
 
 @RestController
@@ -44,6 +45,9 @@ public class UcenikController {
 	@Autowired
 	private OdeljenjeRepository odeljenjeRepo;
 
+	@Autowired
+	private EncryptionService encryptionService;
+	
 	private final Logger logger = (Logger) LoggerFactory.getLogger(this.getClass());
 
 	@Secured("ROLE_ADMIN")
@@ -84,10 +88,9 @@ public class UcenikController {
 		noviUcenik.setImeUcenika(ucenik.getImeUcenika());
 		noviUcenik.setPrezimeUcenika(ucenik.getPrezimeUcenika());
 		noviUcenik.setKorisnickoImeUcenika(ucenik.getKorisnickoImeUcenika());
-		noviUcenik.setSifraUcenika(ucenik.getSifraUcenika());
-		noviUcenik.setRoditelj(ucenik.getRoditelj());
-		noviUcenik.setOdeljenjeUcenika(ucenik.getOdeljenjeUcenika());
-
+		//noviUcenik.setSifraUcenika(ucenik.getSifraUcenika());
+		noviUcenik.setSifraUcenika(encryptionService.enkriptor(ucenik.getSifraUcenika()));
+		
 		noviUcenik.setRoditelj(roditelj);
 		noviUcenik.setOdeljenjeUcenika(odeljenje);
 		
@@ -356,6 +359,7 @@ public class UcenikController {
 		return new ResponseEntity<Iterable<UcenikEntity>>(ucenici, HttpStatus.OK);
 
 	}
+	
 	
 	private String createErrorMessage(BindingResult result) {
 		return result.getAllErrors().stream().map(ObjectError::getDefaultMessage).collect(Collectors.joining(" "));

@@ -14,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -65,10 +67,12 @@ public class OcenaController {
 
 	private final Logger logger = (Logger) LoggerFactory.getLogger(this.getClass());
 
+	
 	@Secured("ROLE_NASTAVNIK")
-	@RequestMapping(value = "/ucenik/{idUcenika}/pred-nast-odeljenja/{idPredNastOdeljenja}", method = RequestMethod.POST)
+	@PreAuthorize("#username == authentication.principal.username")
+	@RequestMapping(value = "/ucenik/{idUcenika}/pred-nast-odeljenja/{idPredNastOdeljenja}/korisnicko-ime-nastavnika/{username}", method = RequestMethod.POST)
 	public ResponseEntity<?> kreirajeOcene(@Valid @RequestBody OcenaEntity ocena, @PathVariable Integer idUcenika,
-			@PathVariable Integer idPredNastOdeljenja, BindingResult result) throws Exception {
+			@PathVariable Integer idPredNastOdeljenja, @PathVariable String username, BindingResult result) throws Exception {
 
 		if (result.hasErrors()) {
 			return new ResponseEntity<>(createErrorMessage(result), HttpStatus.BAD_REQUEST);
@@ -89,6 +93,13 @@ public class OcenaController {
 
 		UcenikEntity ucenik = ucenikRepo.findById(idUcenika).get();
 		PredNastOdeljenjaEntity pno = predNastOdeljenjaRepo.findById(idPredNastOdeljenja).get();
+		
+		if(!pno.getNastavnik().getKorisnickoImeNastavnika().equals(username)) {
+			return new ResponseEntity<RESTError>(
+					new RESTError("Nije vam dozvoljeno da dodelite navedenom uceniku ocenu iz navedenog predmeta. Proverite da li ste tacno uneli predmet i ucenika"),
+					HttpStatus.BAD_REQUEST);
+			
+		}
 
 		if (ucenik.getOdeljenjeUcenika() != pno.getPredajeOdeljenju()) {
 			return new ResponseEntity<RESTError>(
@@ -97,6 +108,11 @@ public class OcenaController {
 		}
 
 		novaOcena.setOcena(ocena.getOcena());
+		if(ocena.getOcena()<1 || ocena.getOcena()>5) {
+			return new ResponseEntity<RESTError>(
+					new RESTError("Ocena mora biti uneta kao jednocifreni broj izmedju 1 i 5."),
+					HttpStatus.BAD_REQUEST);
+		}
 		novaOcena.setDatumOcene(new Date());
 		novaOcena.setTipOcene(ETipOcene.REDOVNA);
 		novaOcena.setOcenaUcenika(ucenik);
@@ -112,6 +128,12 @@ public class OcenaController {
 		if (novaOcena.getOcenaUcenika().getRoditelj().getEmailRoditelja().equals("nemanja90tem@yahoo.com")) {
 			emailService.sendTemplateMessage(ocenaEntity);
 		}
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String currentPrincipalName = authentication.getName();
+
+		logger.info("Nastavnik " + currentPrincipalName + " je dao ocenu " + ocena.getOcena() + " uceniku "
+				+ ucenik.getImeUcenika() + ucenik.getPrezimeUcenika());
 
 		return new ResponseEntity<OcenaEntity>(ocenaEntity, HttpStatus.OK);
 

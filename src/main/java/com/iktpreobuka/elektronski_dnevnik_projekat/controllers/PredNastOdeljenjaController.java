@@ -3,6 +3,8 @@ package com.iktpreobuka.elektronski_dnevnik_projekat.controllers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,6 +44,8 @@ public class PredNastOdeljenjaController {
 
 	@Autowired
 	public PredNastOdeljenjaService pnoService;
+	
+	private final Logger logger = (Logger) LoggerFactory.getLogger(this.getClass());
 
 	@Secured("ROLE_ADMIN") 
 	@RequestMapping(path = "/predmet/{idPredmeta}/nastavnik/{idNastavnika}/odeljenje/{idOdeljenja}", method = RequestMethod.POST)
@@ -239,7 +243,7 @@ public class PredNastOdeljenjaController {
 	}
 
 	
-	@PreAuthorize("#username == authentication.principal.username")
+	//@PreAuthorize("#username == authentication.principal.username")
 	@RequestMapping(value = "/prikazPredmetaNastavnika/{username}", method = RequestMethod.GET)
 	public ResponseEntity<?> prikaziPredmeteNastavnika(@PathVariable String username) {
 

@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +34,8 @@ public class RazredController {
 
 	@Autowired
 	private RazredService razredService;
+	
+	private final Logger logger = (Logger) LoggerFactory.getLogger(this.getClass());
 	
 
 	@Secured("ROLE_ADMIN") 

@@ -12,11 +12,12 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+//import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 
-@EnableGlobalMethodSecurity(
-		securedEnabled = false,
-		prePostEnabled = false,  
-		jsr250Enabled = false)
+@EnableGlobalMethodSecurity(securedEnabled = false  //,
+//prePostEnabled = true, 
+//jsr250Enabled = true
+)
 @Configuration
 @EnableWebSecurity
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -37,12 +38,12 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 	public void configure(AuthenticationManagerBuilder auth) throws Exception {
 
 		auth.jdbcAuthentication().usersByUsernameQuery(nastavniciQuery).authoritiesByUsernameQuery(roleNastavniciQuery)
-				.passwordEncoder(passwordEncoder()).dataSource(dataSource).and()
-				.jdbcAuthentication().usersByUsernameQuery(adminiQuery).authoritiesByUsernameQuery(roleAdminiQuery)
-				.passwordEncoder(passwordEncoder()).dataSource(dataSource).and()
-				.jdbcAuthentication().usersByUsernameQuery(roditeljQuery).authoritiesByUsernameQuery(roleRoditeljiQuery)
-				.passwordEncoder(passwordEncoder()).dataSource(dataSource).and()
-				.jdbcAuthentication().usersByUsernameQuery(ucenikQuery).authoritiesByUsernameQuery(roleUceniciQuery)
+				.passwordEncoder(passwordEncoder()).dataSource(dataSource).and().jdbcAuthentication()
+				.usersByUsernameQuery(adminiQuery).authoritiesByUsernameQuery(roleAdminiQuery)
+				.passwordEncoder(passwordEncoder()).dataSource(dataSource).and().jdbcAuthentication()
+				.usersByUsernameQuery(roditeljQuery).authoritiesByUsernameQuery(roleRoditeljiQuery)
+				.passwordEncoder(passwordEncoder()).dataSource(dataSource).and().jdbcAuthentication()
+				.usersByUsernameQuery(ucenikQuery).authoritiesByUsernameQuery(roleUceniciQuery)
 				.passwordEncoder(passwordEncoder()).dataSource(dataSource);
 	}
 
@@ -51,19 +52,19 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Value("${spring.queries.rolesNastavnici-query}")
 	private String roleNastavniciQuery;
-	
+
 	@Value("${spring.queries.admini-query}")
 	private String adminiQuery;
 
 	@Value("${spring.queries.rolesAdmini-query}")
 	private String roleAdminiQuery;
-	
+
 	@Value("${spring.queries.roditelj-query}")
 	private String roditeljQuery;
 
 	@Value("${spring.queries.rolesRoditelji-query}")
 	private String roleRoditeljiQuery;
-	
+
 	@Value("${spring.queries.ucenik-query}")
 	private String ucenikQuery;
 
@@ -75,4 +76,10 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 		return encoder;
 	}
+
+	// @Bean
+	// public static NoOpPasswordEncoder passwordEncoder() {
+	// return (NoOpPasswordEncoder) NoOpPasswordEncoder.getInstance();
+	// }
+
 }

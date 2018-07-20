@@ -34,8 +34,6 @@ public class OdeljenjeEntity {
 	@Pattern(regexp = "^([a-j]{1})$", message = "Odeljenje mora biti uneto kao jedno malo slovo izmedju a i j.")
 	private String imeOdeljenja;
 
-
-	
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
 	@JoinColumn(name = "razredOdeljenja")
 	private RazredEntity razredOdeljenja;

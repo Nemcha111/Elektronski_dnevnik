@@ -42,7 +42,7 @@ public class AdminController {
 	
 	private final Logger logger = (Logger) LoggerFactory.getLogger(this.getClass());
 
-	//@Secured("ROLE_ADMIN") 
+	@Secured("ROLE_ADMIN") 
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<?> dodajNovogAdmina(@Valid @RequestBody AdminEntity admin, BindingResult result) {
 
@@ -62,13 +62,13 @@ public class AdminController {
 		AdminEntity noviAdmin = new AdminEntity();
 
 		noviAdmin.setKorisnickoImeAdmina(admin.getKorisnickoImeAdmina());
-		noviAdmin.setSifraAdmina(admin.getSifraAdmina());
-		//noviAdmin.setSifraAdmina(encryptionService.enkriptor(admin.getSifraAdmina()));
+		//noviAdmin.setSifraAdmina(admin.getSifraAdmina());
+		noviAdmin.setSifraAdmina(encryptionService.enkriptor(admin.getSifraAdmina()));
 
 		return new ResponseEntity<AdminEntity>(adminRepo.save(noviAdmin), HttpStatus.OK);
 	}
 
-	//@Secured("ROLE_ADMIN") 
+	@Secured("ROLE_ADMIN") 
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<?> prikaziSveAdmine() {
 

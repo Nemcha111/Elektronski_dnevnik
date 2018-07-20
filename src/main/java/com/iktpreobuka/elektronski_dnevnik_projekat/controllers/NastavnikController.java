@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.iktpreobuka.elektronski_dnevnik_projekat.entities.NastavnikEntity;
 import com.iktpreobuka.elektronski_dnevnik_projekat.repositories.NastavnikRepository;
+import com.iktpreobuka.elektronski_dnevnik_projekat.services.EncryptionService;
 import com.iktpreobuka.elektronski_dnevnik_projekat.util.RESTError;
 
 @RestController
@@ -28,6 +31,11 @@ public class NastavnikController {
 
 	@Autowired
 	private NastavnikRepository nastavnikRepo;
+	
+	@Autowired
+	private EncryptionService encryptionService;
+	
+	private final Logger logger = (Logger) LoggerFactory.getLogger(this.getClass());
 
 	@Secured("ROLE_ADMIN")
 	@RequestMapping(method = RequestMethod.GET)
@@ -46,7 +54,7 @@ public class NastavnikController {
 
 	}
 
-	//@Secured("ROLE_ADMIN")
+	@Secured("ROLE_ADMIN")
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<?> dodajNovogNastavnika(@Valid @RequestBody NastavnikEntity nastavnik, BindingResult result) {
 
@@ -68,7 +76,8 @@ public class NastavnikController {
 		noviNastavnik.setImeNastavnika(nastavnik.getImeNastavnika());
 		noviNastavnik.setPrezimeNastavnika(nastavnik.getPrezimeNastavnika());
 		noviNastavnik.setKorisnickoImeNastavnika(nastavnik.getKorisnickoImeNastavnika());
-		noviNastavnik.setSifraNastavnika(nastavnik.getSifraNastavnika());
+		//noviNastavnik.setSifraNastavnika(nastavnik.getSifraNastavnika());
+		noviNastavnik.setSifraNastavnika(encryptionService.enkriptor(nastavnik.getSifraNastavnika()));
 
 		return new ResponseEntity<NastavnikEntity>(nastavnikRepo.save(noviNastavnik), HttpStatus.OK);
 	}

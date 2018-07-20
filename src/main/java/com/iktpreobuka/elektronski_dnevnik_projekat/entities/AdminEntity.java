@@ -27,7 +27,7 @@ public class AdminEntity {
 
 	@Column
 	@NotNull(message = "Sifra mora biti uneta.")
-	//@Size(min = 2, max = 80, message = "Sifra mora biti izmedju {min} i {max} karaktera.")
+	@Size(min = 2, max = 64, message = "Sifra mora biti izmedju {min} i {max} karaktera.")
 	private String sifraAdmina;
 
 	@Column (name = "uloga_admina")

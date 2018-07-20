@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,6 +43,9 @@ public class OdeljenjeController {
 	
 	@Autowired
 	public UcenikRepository ucenikRepo;
+	
+	private final Logger logger = (Logger) LoggerFactory.getLogger(this.getClass());
+	
 
 	@Secured("ROLE_ADMIN")
 	@RequestMapping(method = RequestMethod.GET)
@@ -60,7 +65,7 @@ public class OdeljenjeController {
 	}
 
 	@Secured("ROLE_ADMIN")
-	@RequestMapping(value = "/razred/{idRazreda}", method = RequestMethod.POST)
+	@RequestMapping(value = "/razred-id/{idRazreda}", method = RequestMethod.POST)
 	public ResponseEntity<?> kreirajeOdeljenja(@Valid @RequestBody OdeljenjeEntity odeljenje,
 			@PathVariable Integer idRazreda, BindingResult result) {
 

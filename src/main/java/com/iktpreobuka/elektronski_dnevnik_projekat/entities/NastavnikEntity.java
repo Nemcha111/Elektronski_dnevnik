@@ -49,8 +49,9 @@ public class NastavnikEntity {
 	
 	@Column
 	@NotNull(message = "Sifra mora biti uneta.")
-	//@Size(min = 5, max = 20, message = "Sifra mora biti izmedju {min} i {max} karaktera.")
+	@Size(min = 5, max = 64, message = "Sifra mora biti izmedju {min} i {max} karaktera.")
 	private String sifraNastavnika;
+	
 	
 	@Column (name = "uloga_nastavnika")
 	private ETipKorisnika korisnikNastavnik = ETipKorisnika.ROLE_NASTAVNIK;
