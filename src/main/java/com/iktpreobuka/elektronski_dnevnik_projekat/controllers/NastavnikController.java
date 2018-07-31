@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -78,6 +80,11 @@ public class NastavnikController {
 		noviNastavnik.setKorisnickoImeNastavnika(nastavnik.getKorisnickoImeNastavnika());
 		//noviNastavnik.setSifraNastavnika(nastavnik.getSifraNastavnika());
 		noviNastavnik.setSifraNastavnika(encryptionService.enkriptor(nastavnik.getSifraNastavnika()));
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String currentPrincipalName = authentication.getName();
+
+		logger.info("Administrator " + currentPrincipalName + " je kreirao novog nastavnika " + nastavnik.getKorisnickoImeNastavnika() );
 
 		return new ResponseEntity<NastavnikEntity>(nastavnikRepo.save(noviNastavnik), HttpStatus.OK);
 	}
@@ -102,6 +109,11 @@ public class NastavnikController {
 		nastavnik.setImeNastavnika(noviNastavnik.getImeNastavnika());
 		nastavnik.setPrezimeNastavnika(noviNastavnik.getPrezimeNastavnika());
 		nastavnik.setKorisnickoImeNastavnika(noviNastavnik.getKorisnickoImeNastavnika());
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String currentPrincipalName = authentication.getName();
+
+		logger.info("Administrator " + currentPrincipalName + " je kreirao izmenio nastavnika " + nastavnik.getKorisnickoImeNastavnika());
 
 		return new ResponseEntity<NastavnikEntity>(nastavnikRepo.save(nastavnik), HttpStatus.OK);
 	}
@@ -116,15 +128,22 @@ public class NastavnikController {
 					HttpStatus.NOT_FOUND);
 		}
 
-		NastavnikEntity roditelj = nastavnikRepo.findById(idNastavnika).get();
-		if (roditelj.getPredmetniNastavniciOdeljenja().size() > 0) {
+		NastavnikEntity nastavnik = nastavnikRepo.findById(idNastavnika).get();
+		if (nastavnik.getPredmetniNastavniciOdeljenja().size() > 0) {
 			return new ResponseEntity<RESTError>(
 					new RESTError("Ovaj nastavnik ima dodeljen predmet ili odeljenje te ga ne mozete obrisati."),
 					HttpStatus.NOT_FOUND);
 		}
 
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String currentPrincipalName = authentication.getName();
+
+		logger.warn("Administrator " + currentPrincipalName + " je izbrisao nastavnika " + nastavnik.getKorisnickoImeNastavnika());
+		
 		nastavnikRepo.deleteById(idNastavnika);
-		return new ResponseEntity<NastavnikEntity>(roditelj, HttpStatus.OK);
+		
+		return new ResponseEntity<NastavnikEntity>(nastavnik, HttpStatus.OK);
 
 	}
 

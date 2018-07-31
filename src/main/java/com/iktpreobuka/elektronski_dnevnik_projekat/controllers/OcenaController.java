@@ -38,11 +38,6 @@ import com.iktpreobuka.elektronski_dnevnik_projekat.services.EmailService;
 import com.iktpreobuka.elektronski_dnevnik_projekat.services.OcenaService;
 import com.iktpreobuka.elektronski_dnevnik_projekat.util.RESTError;
 
-//logger.debug("This is a debug message");
-//logger.info("This is an info message");
-//logger.warn("This is a warn message");
-//logger.error("This is an error message");
-
 @RestController
 @RequestMapping(path = "/API/version1/ocena")
 public class OcenaController {
@@ -227,8 +222,15 @@ public class OcenaController {
 		}
 
 		OcenaEntity ocena = ocenaRepo.findById(idOcene).get();
-
+		
 		ocenaRepo.deleteById(idOcene);
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String currentPrincipalName = authentication.getName();
+
+		logger.warn("Administrator " + currentPrincipalName + " je obrisao ocenu sa ID-jem " + ocena.getIdOcene());
+
+		
 		return new ResponseEntity<OcenaEntity>(ocena, HttpStatus.OK);
 
 	}
@@ -253,6 +255,13 @@ public class OcenaController {
 		ocena.setOcena(novaOcena.getOcena());
 		ocena.setDatumOcene(new Date());
 		// ocena.setSkolskaGodinaOcene(novaOcena.getSkolskaGodinaOcene());
+		
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String currentPrincipalName = authentication.getName();
+
+		logger.info("Administrator " + currentPrincipalName + " je izmenio ocenu sa ID-jem " + ocena.getIdOcene());
+		
 
 		return new ResponseEntity<OcenaEntity>(ocenaRepo.save(ocena), HttpStatus.OK);
 
@@ -318,11 +327,20 @@ public class OcenaController {
 					"Ne postoji ni jedna zakljucna ocena polugodista za unetu skolsku godinu. Proverite da li ste ispravno uneli skolsku godinu"),
 					HttpStatus.BAD_REQUEST);
 		}
+		
 
 		for (OcenaEntity ocenaEntity : ocenePolugodista) {
 
+			
 			ocenaRepo.delete(ocenaEntity);
 		}
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String currentPrincipalName = authentication.getName();
+
+		logger.warn("Administrator " + currentPrincipalName + " je obrisao ocene za polugodiste skolske godine " + skolskaGodina);
+		
+		
 		return new ResponseEntity<Iterable<OcenaEntity>>(ocenePolugodista, HttpStatus.OK);
 	}
 
@@ -348,11 +366,18 @@ public class OcenaController {
 					"Ne postoji ni jedna zakljucna ocena polugodista za unetu skolsku godinu. Proverite da li ste ispravno uneli skolsku godinu."),
 					HttpStatus.BAD_REQUEST);
 		}
-
+		
+		
 		for (OcenaEntity ocenaEntity : oceneZakljucne) {
 
 			ocenaRepo.delete(ocenaEntity);
 		}
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String currentPrincipalName = authentication.getName();
+
+		logger.warn("Administrator " + currentPrincipalName + " je obrisao zakuljucne ocene skolske godine " + skolskaGodina);
+		
 		return new ResponseEntity<Iterable<OcenaEntity>>(oceneZakljucne, HttpStatus.OK);
 	}
 
@@ -412,10 +437,16 @@ public class OcenaController {
 		return new ResponseEntity<Iterable<OcenaEntity>>(ocenePolugodista, HttpStatus.OK);
 	}
 
-	// TODO napraviti pregled ocena ucenika
 
 	private String createErrorMessage(BindingResult result) {
 		return result.getAllErrors().stream().map(ObjectError::getDefaultMessage).collect(Collectors.joining(" "));
 	}
 
 }
+
+
+//logger.debug("This is a debug message");
+//logger.info("This is an info message");
+//logger.warn("This is a warn message");
+//logger.error("This is an error message");
+

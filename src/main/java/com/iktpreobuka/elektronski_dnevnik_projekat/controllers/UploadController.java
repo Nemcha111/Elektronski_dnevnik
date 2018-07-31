@@ -23,31 +23,31 @@ public class UploadController {
 	private final Logger logger = (Logger) LoggerFactory.getLogger(this.getClass());
 
 	
-//	@RequestMapping(value = "/download", method = RequestMethod.GET)
-//	public class DownloadServlet extends HttpServlet {
-//	    private final int ARBITARY_SIZE = 1048;
-//	 
-//	    @Override
-//	    protected void doGet(HttpServletRequest req, HttpServletResponse resp) 
-//	      throws ServletException, IOException {
-//	     
-//	        resp.setContentType("log/plain");
-//	        resp.setHeader("Content-disposition", "attachment; filename=spring-boot-logging.log");
-//	 
-//	        try(InputStream in = req.getServletContext().getResourceAsStream("logs/spring-boot-logging.log");
-//	          OutputStream out = resp.getOutputStream()) {
-//	 
-//	            byte[] buffer = new byte[ARBITARY_SIZE];
-//	         
-//	            int numBytesRead;
-//	            while ((numBytesRead = in.read(buffer)) > 0) {
-//	                out.write(buffer, 0, numBytesRead);
-//	            }
-//	        }
-//	    }
+	@RequestMapping(value = "/download", method = RequestMethod.GET)
+	public class DownloadServlet extends HttpServlet {
+	    private final int ARBITARY_SIZE = 1048;
+	 
+	    @Override
+	    protected void doGet(HttpServletRequest req, HttpServletResponse resp) 
+	      throws ServletException, IOException {
+	     
+	        resp.setContentType("log/plain");
+	        resp.setHeader("Content-disposition", "attachment; filename=spring-boot-logging.log");
+	 
+	        try(InputStream in = req.getServletContext().getResourceAsStream("logs/spring-boot-logging.log");
+	          OutputStream out = resp.getOutputStream()) {
+	 
+	            byte[] buffer = new byte[ARBITARY_SIZE];
+	         
+	            int numBytesRead;
+	            while ((numBytesRead = in.read(buffer)) > 0) {
+	                out.write(buffer, 0, numBytesRead);
+	            }
+	        }
+	    }
 	}
 	
-	
+}
 	
 	
 	/*@GetMapping(value = "/download", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
